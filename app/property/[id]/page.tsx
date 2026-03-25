@@ -89,6 +89,57 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
             </section>
 
             <DealAnalysis initialPurchasePrice={property.price} />
+
+            <section className="space-y-4 rounded-xl border border-[#dbe8ff] bg-[#f8fbff] p-5">
+              <h2 className="text-lg font-semibold text-[#1a1a1a]">
+                DADU Opportunity
+              </h2>
+
+              <div className="grid grid-cols-1 gap-3 rounded-xl border border-[#d6e3ff] bg-white p-4 text-sm sm:grid-cols-2">
+                <p>
+                  <span className="text-[#63708a]">Parcel size</span>
+                  <span className="ml-2 font-semibold text-[#1a1a1a]">
+                    7,200 sqft
+                  </span>
+                </p>
+                <p>
+                  <span className="text-[#63708a]">Existing footprint</span>
+                  <span className="ml-2 font-semibold text-[#1a1a1a]">
+                    1,980 sqft
+                  </span>
+                </p>
+                <p>
+                  <span className="text-[#63708a]">Current lot coverage</span>
+                  <span className="ml-2 font-semibold text-[#1a1a1a]">
+                    27.5%
+                  </span>
+                </p>
+                <p>
+                  <span className="text-[#63708a]">Zoning</span>
+                  <span className="ml-2 font-semibold text-[#1a1a1a]">
+                    R-5 Residential
+                  </span>
+                </p>
+                <p>
+                  <span className="text-[#63708a]">Setback constraints</span>
+                  <span className="ml-2 font-semibold text-[#1a1a1a]">
+                    Rear 15 ft, side 5 ft
+                  </span>
+                </p>
+                <p>
+                  <span className="text-[#63708a]">Estimated DADU potential</span>
+                  <span className="ml-2 font-semibold text-[#1a1a1a]">
+                    Medium to high
+                  </span>
+                </p>
+              </div>
+
+              <p className="text-xs leading-6 text-[#63708a]">
+                Detailed DADU feasibility analysis coming soon. Final suitability
+                depends on zoning, lot coverage, setbacks, utilities, and local
+                regulations.
+              </p>
+            </section>
           </div>
         </article>
       </main>
