@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPropertyById } from "@/lib/mock-properties";
 import DealAnalysis from "./DealAnalysis";
+import BRRRRAnalysis from "./BRRRRAnalysis";
 
 const priceFmt = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -14,6 +15,17 @@ const sqftFmt = new Intl.NumberFormat("en-US");
 type PropertyPageProps = {
   params: Promise<{ id: string }>;
 };
+
+function daduPotentialBadgeClasses(potential: string) {
+  const normalized = potential.toLowerCase();
+  if (normalized.includes("high")) {
+    return "bg-emerald-100 text-emerald-800 border-emerald-200";
+  }
+  if (normalized.includes("low")) {
+    return "bg-amber-100 text-amber-800 border-amber-200";
+  }
+  return "bg-sky-100 text-sky-800 border-sky-200";
+}
 
 export default async function PropertyDetailPage({ params }: PropertyPageProps) {
   const { id } = await params;
@@ -89,47 +101,61 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
             </section>
 
             <DealAnalysis initialPurchasePrice={property.price} />
+            <BRRRRAnalysis initialPurchasePrice={property.price} />
 
             <section className="space-y-4 rounded-xl border border-[#dbe8ff] bg-[#f8fbff] p-5">
-              <h2 className="text-lg font-semibold text-[#1a1a1a]">
-                DADU Opportunity
-              </h2>
+              <div className="flex flex-wrap items-center gap-2">
+                <h2 className="text-lg font-semibold text-[#1a1a1a]">
+                  DADU Opportunity
+                </h2>
+                <span
+                  className={`inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${daduPotentialBadgeClasses(
+                    property.daduOpportunity.estimatedDaduPotential,
+                  )}`}
+                >
+                  {property.daduOpportunity.estimatedDaduPotential}
+                </span>
+              </div>
 
               <div className="grid grid-cols-1 gap-3 rounded-xl border border-[#d6e3ff] bg-white p-4 text-sm sm:grid-cols-2">
                 <p>
                   <span className="text-[#63708a]">Parcel size</span>
                   <span className="ml-2 font-semibold text-[#1a1a1a]">
-                    7,200 sqft
+                    {property.daduOpportunity.parcelSize}
                   </span>
                 </p>
                 <p>
                   <span className="text-[#63708a]">Existing footprint</span>
                   <span className="ml-2 font-semibold text-[#1a1a1a]">
-                    1,980 sqft
+                    {property.daduOpportunity.existingFootprint}
                   </span>
                 </p>
                 <p>
                   <span className="text-[#63708a]">Current lot coverage</span>
                   <span className="ml-2 font-semibold text-[#1a1a1a]">
-                    27.5%
+                    {property.daduOpportunity.currentLotCoverage}
                   </span>
                 </p>
                 <p>
                   <span className="text-[#63708a]">Zoning</span>
                   <span className="ml-2 font-semibold text-[#1a1a1a]">
-                    R-5 Residential
+                    {property.daduOpportunity.zoning}
                   </span>
                 </p>
                 <p>
                   <span className="text-[#63708a]">Setback constraints</span>
                   <span className="ml-2 font-semibold text-[#1a1a1a]">
-                    Rear 15 ft, side 5 ft
+                    {property.daduOpportunity.setbackConstraints}
                   </span>
                 </p>
                 <p>
                   <span className="text-[#63708a]">Estimated DADU potential</span>
-                  <span className="ml-2 font-semibold text-[#1a1a1a]">
-                    Medium to high
+                  <span
+                    className={`ml-2 inline-flex rounded-full border px-2 py-0.5 text-xs font-semibold ${daduPotentialBadgeClasses(
+                      property.daduOpportunity.estimatedDaduPotential,
+                    )}`}
+                  >
+                    {property.daduOpportunity.estimatedDaduPotential}
                   </span>
                 </p>
               </div>
