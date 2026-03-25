@@ -60,7 +60,13 @@ Any address → complete investment analysis in under 60 seconds, without manual
 
 **Stack:** Next.js 16 (App Router), React 19, Tailwind v4. Note: these are very new versions with breaking changes from prior training data. Read `node_modules/next/dist/docs/` before writing Next.js code (see AGENTS.md).
 
-**Markets:** Pacific NW intent was already reflected in the prototype's Oregon mock data. Portland and Seattle metros are strong pilot candidates — both have active ADU/DADU markets with recent zoning changes (Seattle's DADU legalization, Portland's middle housing rules).
+**Markets:** Four v1 launch markets, all in the Pacific NW. Washington markets are prioritized — the founder's investor and realtor network is concentrated there:
+- **King County WA** (Seattle, Bellevue, Redmond, Renton) — primary market; largest investor community, single zoning authority
+- **Snohomish County WA** (Everett metro) — active investor community, reasonable open GIS data availability
+- **Pierce County WA** (Tacoma metro) — active investor community, reasonable open GIS data availability
+- **Multnomah County OR** (Portland metro) — secondary market; strong DADU activity post-2023 Residential Infill Project
+
+All four are single county jurisdictions, which simplifies the data pipeline per market (one assessor API, one zoning authority).
 
 **Validation plan:** Founder has a day job and is not a daily active investor. MVP validation = ship to 3-5 active investor peers in the target market for structured feedback. Not waiting for personal daily use.
 
@@ -73,7 +79,7 @@ Any address → complete investment analysis in under 60 seconds, without manual
 - **API-first**: REST API must support web, mobile, and browser plugin from day one — do not build web-only shortcuts that break future clients
 - **Variable data costs**: Live API calls (county records, Rentcast) must be metered per paid user — no unbounded free lookups
 - **DADU data maintainability**: Zoning rules DB must be easy to update per market as rules change — do not hardcode zoning logic into app code
-- **Market scoping**: Start with 2-3 Pacific NW markets; data pipeline architecture must support adding new markets without code changes
+- **Market scoping**: Launch with 4 Pacific NW county-level markets (King, Snohomish, Pierce, Multnomah); data pipeline architecture must support adding new markets without code changes
 - **Founder bandwidth**: Part-time build — phases should deliver working, testable features early so peer feedback can happen at each step
 
 ## Key Decisions
@@ -81,7 +87,7 @@ Any address → complete investment analysis in under 60 seconds, without manual
 | Decision | Rationale | Outcome |
 |----------|-----------|---------|
 | Clean start on architecture | Prototype is UI-only with no data layer, auth, or API — adding SaaS infrastructure on top would compound tech debt | — Pending |
-| Pacific NW (OR/WA) as pilot markets | High DADU/ADU activity, accessible public data APIs, existing prototype context in Oregon | — Pending |
+| 4-county Pacific NW launch markets | Founder's investor/realtor network concentrated in WA; all 4 are single county jurisdictions simplifying data pipelines; strong DADU activity across all markets | — Pending |
 | Hybrid DADU data strategy | Live APIs alone are inconsistent across municipalities; manual rules DB ensures accuracy; hybrid allows automation where possible | — Pending |
 | Freemium gate: automated data behind paid tier | Keeps API costs variable and aligned with revenue; free tier still delivers value via calculators | — Pending |
 | REST API from day one | Mobile app and browser plugin are planned post-MVP — building web-only shortcuts now would require expensive rewrites | — Pending |
