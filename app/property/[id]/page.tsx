@@ -1,8 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPropertyById } from "@/lib/mock-properties";
-import DealAnalysis from "./DealAnalysis";
-import BRRRRAnalysis from "./BRRRRAnalysis";
+import PropertyAnalysisClient from "./PropertyAnalysisClient";
 
 const priceFmt = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -100,8 +99,7 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
               </p>
             </section>
 
-            <DealAnalysis initialPurchasePrice={property.price} />
-            <BRRRRAnalysis initialPurchasePrice={property.price} />
+            <PropertyAnalysisClient initialPurchasePrice={property.price} />
 
             <section className="space-y-4 rounded-xl border border-[#dbe8ff] bg-[#f8fbff] p-5">
               <div className="flex flex-wrap items-center gap-2">

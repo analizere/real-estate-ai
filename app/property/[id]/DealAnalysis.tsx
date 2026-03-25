@@ -1,9 +1,15 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import type {
+  SharedFinancialInputs,
+  SharedFinancialSetters,
+} from "./PropertyAnalysisClient";
 
 type DealAnalysisProps = {
   initialPurchasePrice: number;
+  sharedValues: SharedFinancialInputs;
+  sharedSetters: SharedFinancialSetters;
 };
 
 const currencyFmt = new Intl.NumberFormat("en-US", {
@@ -25,12 +31,9 @@ type FieldDef = {
 };
 
 type Inputs = {
-  purchasePrice: string;
   downPaymentPercent: string;
   interestRate: string;
   loanTermYears: string;
-  rehabCost: string;
-  monthlyRent: string;
   annualPropertyTax: string;
   annualInsurance: string;
   monthlyExpenses: string;
@@ -42,14 +45,15 @@ function toNumber(value: string, fallback: number) {
   return Number.isFinite(parsed) ? parsed : fallback;
 }
 
-export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps) {
+export default function DealAnalysis({
+  initialPurchasePrice,
+  sharedValues,
+  sharedSetters,
+}: DealAnalysisProps) {
   const [inputs, setInputs] = useState<Inputs>({
-    purchasePrice: String(initialPurchasePrice),
     downPaymentPercent: "20",
     interestRate: "6.5",
     loanTermYears: "30",
-    rehabCost: "15000",
-    monthlyRent: String(Math.round(initialPurchasePrice * 0.007)),
     annualPropertyTax: "4200",
     annualInsurance: "1500",
     monthlyExpenses: "350",
@@ -57,12 +61,15 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
   });
 
   const values = useMemo(() => {
-    const purchasePrice = toNumber(inputs.purchasePrice, initialPurchasePrice);
+    const purchasePrice = toNumber(sharedValues.purchasePrice, initialPurchasePrice);
     const downPaymentPercent = toNumber(inputs.downPaymentPercent, 20);
     const interestRate = toNumber(inputs.interestRate, 6.5);
     const loanTermYears = Math.max(1, toNumber(inputs.loanTermYears, 30));
-    const rehabCost = toNumber(inputs.rehabCost, 15000);
-    const monthlyRent = toNumber(inputs.monthlyRent, Math.round(initialPurchasePrice * 0.007));
+    const rehabCost = toNumber(sharedValues.rehabCost, 15000);
+    const monthlyRent = toNumber(
+      sharedValues.monthlyRent,
+      Math.round(initialPurchasePrice * 0.007),
+    );
     const annualPropertyTax = toNumber(inputs.annualPropertyTax, 4200);
     const annualInsurance = toNumber(inputs.annualInsurance, 1500);
     const monthlyExpenses = toNumber(inputs.monthlyExpenses, 350);
@@ -80,7 +87,7 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
       monthlyExpenses,
       vacancyPercent,
     };
-  }, [initialPurchasePrice, inputs]);
+  }, [initialPurchasePrice, inputs, sharedValues.monthlyRent, sharedValues.purchasePrice, sharedValues.rehabCost]);
 
   const metrics = useMemo(() => {
     const downPaymentAmount =
@@ -135,7 +142,6 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
   }, [values]);
 
   const fields: FieldDef[] = [
-    { key: "purchasePrice", label: "Purchase price" },
     { key: "downPaymentPercent", label: "Down payment %", step: "0.1" },
     { key: "interestRate", label: "Interest rate", step: "0.01" },
     { key: "loanTermYears", label: "Loan term" },
@@ -143,8 +149,6 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
     { key: "annualInsurance", label: "Annual insurance" },
     { key: "monthlyExpenses", label: "Monthly expenses (HOA, maintenance)" },
     { key: "vacancyPercent", label: "Vacancy %", step: "0.1" },
-    { key: "rehabCost", label: "Rehab cost" },
-    { key: "monthlyRent", label: "Est. Monthly Rent" },
   ];
 
   return (
@@ -157,6 +161,17 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2">
+        <label className="space-y-1">
+          <span className="text-sm text-[#4f5b71]">Purchase price</span>
+          <input
+            inputMode="decimal"
+            type="number"
+            step="1"
+            value={sharedValues.purchasePrice}
+            onChange={(event) => sharedSetters.setPurchasePrice(event.target.value)}
+            className="h-10 w-full rounded-lg border border-[#c8d8f8] bg-white px-3 text-sm text-[#1a1a1a] outline-none transition-[border-color,box-shadow] focus:border-[#006aff] focus:ring-2 focus:ring-[#006aff]/20"
+          />
+        </label>
         {fields.map((field) => (
           <label key={field.key} className="space-y-1">
             <span className="text-sm text-[#4f5b71]">{field.label}</span>
@@ -172,6 +187,28 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
             />
           </label>
         ))}
+        <label className="space-y-1">
+          <span className="text-sm text-[#4f5b71]">Rehab cost</span>
+          <input
+            inputMode="decimal"
+            type="number"
+            step="1"
+            value={sharedValues.rehabCost}
+            onChange={(event) => sharedSetters.setRehabCost(event.target.value)}
+            className="h-10 w-full rounded-lg border border-[#c8d8f8] bg-white px-3 text-sm text-[#1a1a1a] outline-none transition-[border-color,box-shadow] focus:border-[#006aff] focus:ring-2 focus:ring-[#006aff]/20"
+          />
+        </label>
+        <label className="space-y-1">
+          <span className="text-sm text-[#4f5b71]">Est. Monthly Rent</span>
+          <input
+            inputMode="decimal"
+            type="number"
+            step="1"
+            value={sharedValues.monthlyRent}
+            onChange={(event) => sharedSetters.setMonthlyRent(event.target.value)}
+            className="h-10 w-full rounded-lg border border-[#c8d8f8] bg-white px-3 text-sm text-[#1a1a1a] outline-none transition-[border-color,box-shadow] focus:border-[#006aff] focus:ring-2 focus:ring-[#006aff]/20"
+          />
+        </label>
       </div>
 
       <div className="grid grid-cols-1 gap-3 sm:grid-cols-2 lg:grid-cols-3">
