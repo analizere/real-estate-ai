@@ -26,16 +26,15 @@ type FieldDef = {
 
 type Inputs = {
   purchasePrice: string;
-  monthlyRent: string;
   downPaymentPercent: string;
   interestRate: string;
   loanTermYears: string;
   rehabCost: string;
+  monthlyRent: string;
   annualPropertyTax: string;
   annualInsurance: string;
-  monthlyHoa: string;
-  monthlyMaintenance: string;
-  monthlyVacancyAllowance: string;
+  monthlyExpenses: string;
+  vacancyPercent: string;
 };
 
 function toNumber(value: string, fallback: number) {
@@ -46,30 +45,28 @@ function toNumber(value: string, fallback: number) {
 export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps) {
   const [inputs, setInputs] = useState<Inputs>({
     purchasePrice: String(initialPurchasePrice),
-    monthlyRent: String(Math.round(initialPurchasePrice * 0.007)),
     downPaymentPercent: "20",
     interestRate: "6.5",
     loanTermYears: "30",
     rehabCost: "15000",
+    monthlyRent: String(Math.round(initialPurchasePrice * 0.007)),
     annualPropertyTax: "4200",
     annualInsurance: "1500",
-    monthlyHoa: "150",
-    monthlyMaintenance: "200",
-    monthlyVacancyAllowance: "120",
+    monthlyExpenses: "350",
+    vacancyPercent: "5",
   });
 
   const values = useMemo(() => {
     const purchasePrice = toNumber(inputs.purchasePrice, initialPurchasePrice);
-    const monthlyRent = toNumber(inputs.monthlyRent, Math.round(initialPurchasePrice * 0.007));
     const downPaymentPercent = toNumber(inputs.downPaymentPercent, 20);
     const interestRate = toNumber(inputs.interestRate, 6.5);
     const loanTermYears = Math.max(1, toNumber(inputs.loanTermYears, 30));
     const rehabCost = toNumber(inputs.rehabCost, 15000);
+    const monthlyRent = toNumber(inputs.monthlyRent, Math.round(initialPurchasePrice * 0.007));
     const annualPropertyTax = toNumber(inputs.annualPropertyTax, 4200);
     const annualInsurance = toNumber(inputs.annualInsurance, 1500);
-    const monthlyHoa = toNumber(inputs.monthlyHoa, 150);
-    const monthlyMaintenance = toNumber(inputs.monthlyMaintenance, 200);
-    const monthlyVacancyAllowance = toNumber(inputs.monthlyVacancyAllowance, 120);
+    const monthlyExpenses = toNumber(inputs.monthlyExpenses, 350);
+    const vacancyPercent = toNumber(inputs.vacancyPercent, 5);
 
     return {
       purchasePrice,
@@ -80,9 +77,8 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
       rehabCost,
       annualPropertyTax,
       annualInsurance,
-      monthlyHoa,
-      monthlyMaintenance,
-      monthlyVacancyAllowance,
+      monthlyExpenses,
+      vacancyPercent,
     };
   }, [initialPurchasePrice, inputs]);
 
@@ -102,14 +98,14 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
 
     const monthlyTax = values.annualPropertyTax / 12;
     const monthlyInsurance = values.annualInsurance / 12;
+    const monthlyVacancyAllowance = values.monthlyRent * (values.vacancyPercent / 100);
 
     const totalMonthlyExpenses =
       monthlyMortgagePayment +
       monthlyTax +
       monthlyInsurance +
-      values.monthlyHoa +
-      values.monthlyMaintenance +
-      values.monthlyVacancyAllowance;
+      values.monthlyExpenses +
+      monthlyVacancyAllowance;
 
     const monthlyCashFlow = values.monthlyRent - totalMonthlyExpenses;
 
@@ -117,10 +113,7 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
       values.monthlyRent * 12 -
       (values.annualPropertyTax +
         values.annualInsurance +
-        (values.monthlyHoa +
-          values.monthlyMaintenance +
-          values.monthlyVacancyAllowance) *
-          12);
+        (values.monthlyExpenses + monthlyVacancyAllowance) * 12);
 
     const totalProjectCost = values.purchasePrice + values.rehabCost;
     const capRate =
@@ -143,16 +136,15 @@ export default function DealAnalysis({ initialPurchasePrice }: DealAnalysisProps
 
   const fields: FieldDef[] = [
     { key: "purchasePrice", label: "Purchase price" },
-    { key: "monthlyRent", label: "Monthly rent" },
     { key: "downPaymentPercent", label: "Down payment %", step: "0.1" },
     { key: "interestRate", label: "Interest rate", step: "0.01" },
-    { key: "loanTermYears", label: "Loan term in years" },
-    { key: "rehabCost", label: "Rehab cost" },
+    { key: "loanTermYears", label: "Loan term" },
     { key: "annualPropertyTax", label: "Annual property tax" },
     { key: "annualInsurance", label: "Annual insurance" },
-    { key: "monthlyHoa", label: "Monthly HOA" },
-    { key: "monthlyMaintenance", label: "Monthly maintenance" },
-    { key: "monthlyVacancyAllowance", label: "Monthly vacancy allowance" },
+    { key: "monthlyExpenses", label: "Monthly expenses (HOA, maintenance)" },
+    { key: "vacancyPercent", label: "Vacancy %", step: "0.1" },
+    { key: "rehabCost", label: "Rehab cost" },
+    { key: "monthlyRent", label: "Est. Monthly Rent" },
   ];
 
   return (
