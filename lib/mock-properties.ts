@@ -8,6 +8,7 @@ export type Property = {
   beds: number;
   baths: number;
   sqft: number;
+  description: string;
   imageClass: string;
 };
 
@@ -22,6 +23,8 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 4,
     baths: 3,
     sqft: 2400,
+    description:
+      "Classic two-story home with a fully updated kitchen, generous backyard deck, and flexible bonus room ideal for a home office.",
     imageClass: "from-slate-600 to-slate-800",
   },
   {
@@ -34,6 +37,8 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 3,
     baths: 2,
     sqft: 1650,
+    description:
+      "Light-filled bungalow near parks and cafes, featuring hardwood floors, a modern primary suite, and a private fenced yard.",
     imageClass: "from-stone-500 to-stone-700",
   },
   {
@@ -46,6 +51,8 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 5,
     baths: 4,
     sqft: 3200,
+    description:
+      "Coastal-view property with open-concept living, oversized windows, and a spacious entertaining kitchen with premium finishes.",
     imageClass: "from-sky-600 to-indigo-800",
   },
   {
@@ -58,6 +65,8 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 2,
     baths: 2,
     sqft: 1180,
+    description:
+      "Thoughtfully renovated single-level home with new appliances, efficient layout, and low-maintenance landscaping.",
     imageClass: "from-neutral-500 to-neutral-700",
   },
   {
@@ -70,6 +79,8 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 3,
     baths: 2,
     sqft: 1980,
+    description:
+      "Contemporary mountain-modern home with vaulted ceilings, gas fireplace, and seamless indoor-outdoor living.",
     imageClass: "from-amber-600 to-orange-900",
   },
   {
@@ -82,6 +93,8 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 4,
     baths: 3,
     sqft: 2750,
+    description:
+      "Elegant residence in a quiet neighborhood with a chef's kitchen, large primary retreat, and landscaped patio.",
     imageClass: "from-teal-600 to-emerald-900",
   },
   {
@@ -94,6 +107,8 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 2,
     baths: 1,
     sqft: 920,
+    description:
+      "Charming starter home with refreshed interiors, efficient floorplan, and easy access to commuter routes.",
     imageClass: "from-zinc-500 to-zinc-700",
   },
   {
@@ -106,6 +121,12 @@ export const MOCK_PROPERTIES: Property[] = [
     beds: 4,
     baths: 4,
     sqft: 3100,
+    description:
+      "Waterfront-inspired design with panoramic upper-level living, luxury bath finishes, and generous storage throughout.",
     imageClass: "from-blue-700 to-slate-900",
   },
 ];
+
+export function getPropertyById(id: string) {
+  return MOCK_PROPERTIES.find((property) => property.id === id);
+}

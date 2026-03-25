@@ -1,6 +1,7 @@
 "use client";
 
 import { useMemo, useState } from "react";
+import Link from "next/link";
 import { MOCK_PROPERTIES } from "@/lib/mock-properties";
 
 const priceFmt = new Intl.NumberFormat("en-US", {
@@ -149,7 +150,11 @@ export default function Home() {
         <ul className="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4">
           {filtered.map((p) => (
             <li key={p.id}>
-              <article className="group overflow-hidden rounded-xl border border-black/[0.06] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
+              <Link
+                href={`/property/${p.id}`}
+                className="block rounded-xl focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#006aff] focus-visible:ring-offset-2 focus-visible:ring-offset-[#e8e8e6]"
+              >
+                <article className="group overflow-hidden rounded-xl border border-black/[0.06] bg-white shadow-[0_2px_8px_rgba(0,0,0,0.06)] transition-[transform,box-shadow] duration-200 hover:-translate-y-0.5 hover:shadow-[0_8px_24px_rgba(0,0,0,0.1)]">
                 <div
                   className={`relative aspect-[5/3] bg-gradient-to-br ${p.imageClass}`}
                 >
@@ -191,7 +196,8 @@ export default function Home() {
                     </span>
                   </div>
                 </div>
-              </article>
+                </article>
+              </Link>
             </li>
           ))}
         </ul>
