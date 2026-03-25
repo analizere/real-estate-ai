@@ -141,65 +141,63 @@
 
 ## Traceability
 
-*Populated during roadmap creation.*
-
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | — | Pending |
-| AUTH-02 | — | Pending |
-| AUTH-03 | — | Pending |
-| AUTH-04 | — | Pending |
-| AUTH-05 | — | Pending |
-| ONBD-01 | — | Pending |
-| ONBD-02 | — | Pending |
-| ONBD-03 | — | Pending |
-| PROF-01 | — | Pending |
-| PROF-02 | — | Pending |
-| PROF-03 | — | Pending |
-| PROF-04 | — | Pending |
-| PROP-01 | — | Pending |
-| PROP-02 | — | Pending |
-| PROP-03 | — | Pending |
-| PROP-04 | — | Pending |
-| PROP-05 | — | Pending |
-| PROP-06 | — | Pending |
-| CALC-01 | — | Pending |
-| CALC-02 | — | Pending |
-| CALC-03 | — | Pending |
-| CALC-04 | — | Pending |
-| CALC-05 | — | Pending |
-| CALC-06 | — | Pending |
-| DADU-01 | — | Pending |
-| DADU-02 | — | Pending |
-| DADU-03 | — | Pending |
-| DADU-04 | — | Pending |
-| DADU-05 | — | Pending |
-| DADU-06 | — | Pending |
-| RENT-01 | — | Pending |
-| RENT-02 | — | Pending |
-| RENT-03 | — | Pending |
-| RENT-04 | — | Pending |
-| RPRT-01 | — | Pending |
-| RPRT-02 | — | Pending |
-| RPRT-03 | — | Pending |
-| BILL-01 | — | Pending |
-| BILL-02 | — | Pending |
-| BILL-03 | — | Pending |
-| BILL-04 | — | Pending |
-| BILL-05 | — | Pending |
-| BILL-06 | — | Pending |
-| UX-01 | — | Pending |
-| UX-02 | — | Pending |
-| UX-03 | — | Pending |
-| API-01 | — | Pending |
-| API-02 | — | Pending |
-| API-03 | — | Pending |
+| AUTH-01 | Phase 1 | Pending |
+| AUTH-02 | Phase 1 | Pending |
+| AUTH-03 | Phase 1 | Pending |
+| AUTH-04 | Phase 1 | Pending |
+| AUTH-05 | Phase 1 | Pending |
+| ONBD-01 | Phase 3 | Pending |
+| ONBD-02 | Phase 3 | Pending |
+| ONBD-03 | Phase 3 | Pending |
+| PROF-01 | Phase 3 | Pending |
+| PROF-02 | Phase 3 | Pending |
+| PROF-03 | Phase 3 | Pending |
+| PROF-04 | Phase 3 | Pending |
+| PROP-01 | Phase 5 | Pending |
+| PROP-02 | Phase 2 | Pending |
+| PROP-03 | Phase 2 | Pending |
+| PROP-04 | Phase 2 | Pending |
+| PROP-05 | Phase 5 | Pending |
+| PROP-06 | Phase 2 | Pending |
+| CALC-01 | Phase 2 | Pending |
+| CALC-02 | Phase 2 | Pending |
+| CALC-03 | Phase 2 | Pending |
+| CALC-04 | Phase 2 | Pending |
+| CALC-05 | Phase 2 | Pending |
+| CALC-06 | Phase 2 | Pending |
+| DADU-01 | Phase 4 | Pending |
+| DADU-02 | Phase 4 | Pending |
+| DADU-03 | Phase 4 | Pending |
+| DADU-04 | Phase 4 | Pending |
+| DADU-05 | Phase 4 | Pending |
+| DADU-06 | Phase 4 | Pending |
+| RENT-01 | Phase 5 | Pending |
+| RENT-02 | Phase 5 | Pending |
+| RENT-03 | Phase 5 | Pending |
+| RENT-04 | Phase 5 | Pending |
+| RPRT-01 | Phase 6 | Pending |
+| RPRT-02 | Phase 6 | Pending |
+| RPRT-03 | Phase 6 | Pending |
+| BILL-01 | Phase 1 | Pending |
+| BILL-02 | Phase 1 | Pending |
+| BILL-03 | Phase 1 | Pending |
+| BILL-04 | Phase 1 | Pending |
+| BILL-05 | Phase 1 | Pending |
+| BILL-06 | Phase 1 | Pending |
+| UX-01 | Phase 6 | Pending |
+| UX-02 | Phase 6 | Pending |
+| UX-03 | Phase 6 | Pending |
+| API-01 | Phase 1 | Pending |
+| API-02 | Phase 1 | Pending |
+| API-03 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 48 total
-- Mapped to phases: 0 (pending roadmap)
-- Unmapped: 48 ⚠️ (expected — traceability filled during roadmap creation)
+- v1 requirements: 49 total
+- Mapped to phases: 49
+- Unmapped: 0 ✓
 
 ---
 *Requirements defined: 2026-03-25*
-*Last updated: 2026-03-25 after initial definition*
+*Last updated: 2026-03-25 after roadmap revision — Phase 5 pilot market changed from Multnomah County OR to King County WA; Phase 6 remaining markets updated to Snohomish County WA, Pierce County WA, and Multnomah County OR*
