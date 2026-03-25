@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { getPropertyById } from "@/lib/mock-properties";
+import DealAnalysis from "./DealAnalysis";
 
 const priceFmt = new Intl.NumberFormat("en-US", {
   style: "currency",
@@ -87,15 +88,7 @@ export default async function PropertyDetailPage({ params }: PropertyPageProps) 
               </p>
             </section>
 
-            <section className="rounded-xl border border-dashed border-[#ccdfff] bg-[#f8fbff] p-5">
-              <h2 className="text-lg font-semibold text-[#1a1a1a]">
-                Investment Analysis
-              </h2>
-              <p className="mt-2 text-[15px] leading-7 text-[#4f5b71]">
-                Placeholder: cap rate, projected rent, and cash flow metrics will
-                be displayed here.
-              </p>
-            </section>
+            <DealAnalysis initialPurchasePrice={property.price} />
           </div>
         </article>
       </main>
