@@ -87,6 +87,15 @@
 - [ ] **API-02**: All external API calls (public records, GIS, Rentcast) are made server-side only — never from client components
 - [ ] **API-03**: The API design supports future consumption by a mobile app and browser plugin without modification to existing endpoints
 
+### Component Library
+
+- [ ] **COMP-01**: Before building any feature UI, a reusable component library exists in `/components/ui/` as the foundation — every feature in every phase consumes exclusively from this library; no one-off hardcoded styles anywhere in the codebase
+- [ ] **COMP-02**: Design tokens (colors, typography scale, spacing, border radius, shadows) are defined as CSS variables and Tailwind config so changes propagate everywhere automatically; dark mode is built in from day one using CSS variable switching
+- [ ] **COMP-03**: Core components are built before any feature uses them: Button (primary/secondary/ghost/destructive variants), Input, Select, Textarea, Checkbox, Radio, Card, Badge, Tooltip, Modal/Dialog, Toast/notification system, Loading spinner, Skeleton loader, Empty state, Error state
+- [ ] **COMP-04**: Form, layout, data display, and navigation component families are built before the features that need them: FormField wrapper (label + error + helper text), layout primitives (Page, Section, Container, Grid, Sidebar), data display (Stat card, Data table, Property card, Analysis summary card), navigation (top nav desktop, bottom tab bar mobile, user menu dropdown, mobile hamburger menu)
+- [ ] **COMP-05**: All components are mobile-first with Tailwind breakpoints (sm/md/lg); each breakpoint feels native — desktop gets multi-column layouts, expanded navigation, richer data displays, not just a scaled mobile view; tested at 375px, 390px, 768px, and 1280px; all interactive elements have minimum 44×44px touch targets; no horizontal scrolling at any screen size
+- [ ] **COMP-06**: Business logic never lives inside UI components — all logic lives in hooks (`hooks/`), services (`lib/services/`), and API route handlers (`app/api/`); UI components receive data and callbacks via props only
+
 ---
 
 ## v2 Requirements
@@ -192,10 +201,16 @@
 | API-01 | Phase 1 | Pending |
 | API-02 | Phase 1 | Pending |
 | API-03 | Phase 1 | Pending |
+| COMP-01 | Phase 1 | Pending |
+| COMP-02 | Phase 1 | Pending |
+| COMP-03 | Phase 1 | Pending |
+| COMP-04 | Phase 1 | Pending |
+| COMP-05 | Phase 1 | Pending |
+| COMP-06 | Phase 1 | Pending |
 
 **Coverage:**
-- v1 requirements: 49 total
-- Mapped to phases: 49
+- v1 requirements: 55 total
+- Mapped to phases: 55
 - Unmapped: 0 ✓
 
 ---

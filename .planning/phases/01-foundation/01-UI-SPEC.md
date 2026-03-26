@@ -133,7 +133,7 @@ All screens in Phase 1 scope:
 
 **Out of scope for Phase 1 UI:**
 - Stripe Checkout — hosted by Stripe; Phase 1 only needs the "Upgrade" redirect button
-- Any property analysis, deal history, or calculator screens — Phase 2+
+- Feature-specific screens (property analysis, deal history, calculator) — Phase 2+; but the component library built in Phase 1 is consumed by all of them
 
 ---
 
@@ -210,6 +210,95 @@ Components needed for Phase 1 (all from shadcn official registry):
 | Email already registered error | "An account with this email already exists. Sign in instead." |
 | Generic server error | "Something went wrong. Please try again in a moment." |
 | Network error | "Can't connect. Check your internet connection and try again." |
+
+---
+
+## Component Library Specification
+
+Phase 1 delivers the shared component library that every subsequent phase consumes. All components live in `/components/ui/`. No feature in any phase creates one-off styled elements outside this library.
+
+### Design Tokens
+
+Defined as CSS variables in `app/globals.css` using `@theme inline` (Tailwind v4 — no `tailwind.config.*`). Changes to tokens propagate everywhere automatically.
+
+| Token Group | CSS Variable Pattern | Dark Mode |
+|-------------|----------------------|-----------|
+| Colors | `--color-background`, `--color-foreground`, `--color-accent`, `--color-destructive`, `--color-muted`, `--color-border` | Switched via `.dark` class on `<html>` |
+| Typography | `--font-sans`, `--font-mono` | n/a |
+| Spacing | Tailwind scale (4/8/16/24/32/48/64) | n/a |
+| Border radius | `--radius` (base: 6px) | n/a |
+| Shadows | `--shadow-sm`, `--shadow-md`, `--shadow-lg` | Adjusted for dark background in `.dark` |
+
+Dark mode: CSS variable values swap under `.dark` selector. No separate dark-mode stylesheet. `next-themes` or `class` strategy on `<html>`. All color tokens have both light and dark values declared at Phase 1.
+
+### Core Components
+
+| Component | Variants | Location |
+|-----------|----------|----------|
+| Button | primary, secondary, ghost, destructive, link | `components/ui/button.tsx` |
+| Input | default, error | `components/ui/input.tsx` |
+| Select | — | `components/ui/select.tsx` |
+| Textarea | — | `components/ui/textarea.tsx` |
+| Checkbox | — | `components/ui/checkbox.tsx` |
+| Radio / RadioGroup | — | `components/ui/radio-group.tsx` |
+| Card | — | `components/ui/card.tsx` |
+| Badge | default, success, warning, destructive | `components/ui/badge.tsx` |
+| Tooltip | — | `components/ui/tooltip.tsx` |
+| Dialog / Modal | — | `components/ui/dialog.tsx` |
+| Toast | info, success, error | `components/ui/toast.tsx` + `components/ui/toaster.tsx` |
+| Spinner | sm, md, lg | `components/ui/spinner.tsx` |
+| Skeleton | — | `components/ui/skeleton.tsx` |
+| EmptyState | — | `components/ui/empty-state.tsx` |
+| ErrorState | — | `components/ui/error-state.tsx` |
+
+### Form Components
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| FormField | Wrapper: label + input slot + error message + helper text | `components/ui/form-field.tsx` |
+| Form | react-hook-form context wrapper (via shadcn Form) | `components/ui/form.tsx` |
+
+All forms use the same validation pattern: validate on submit, show field-level errors below the input with `role="alert"`, clear on next change.
+
+### Layout Components
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| PageWrapper | Full-page layout shell with consistent padding | `components/ui/page-wrapper.tsx` |
+| Section | Vertical section with heading slot and spacing | `components/ui/section.tsx` |
+| Container | Max-width content container (640px / 1280px variants) | `components/ui/container.tsx` |
+| Grid | Responsive CSS grid (1→2→3 col) | `components/ui/grid.tsx` |
+| SidebarLayout | 240px sidebar + flex-1 content, collapses to stacked on mobile | `components/ui/sidebar-layout.tsx` |
+
+### Data Display Components
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| StatCard | Financial metric tile: label + value + trend indicator | `components/ui/stat-card.tsx` |
+| DataTable | Sortable table with column definitions | `components/ui/data-table.tsx` |
+| PropertyCard | Property thumbnail with address, beds/baths/sqft, price | `components/ui/property-card.tsx` |
+| AnalysisSummaryCard | Deal analysis headline metrics in card format | `components/ui/analysis-summary-card.tsx` |
+
+### Navigation Components
+
+| Component | Purpose | Location |
+|-----------|---------|----------|
+| TopNav | Desktop horizontal navigation bar with logo + links + user menu | `components/ui/top-nav.tsx` |
+| BottomTabBar | Mobile sticky bottom tab navigation | `components/ui/bottom-tab-bar.tsx` |
+| UserMenuDropdown | Avatar + dropdown with settings/sign-out | `components/ui/user-menu-dropdown.tsx` |
+| MobileMenu | Hamburger toggle + slide-in drawer for mobile | `components/ui/mobile-menu.tsx` |
+
+### Component Standards (all components)
+
+- TypeScript with explicit prop types; `className` override accepted on every component
+- Mobile-first Tailwind breakpoints: default (mobile) → `sm:` (640px) → `md:` (768px) → `lg:` (1024px) → `xl:` (1280px)
+- Breakpoint behavior: each breakpoint is native, not scaled — desktop gets multi-column layouts, expanded navigation, richer data displays
+- Tested at: 375px (iPhone SE), 390px (iPhone 14), 768px (iPad), 1280px (desktop)
+- All interactive elements: minimum 44×44px touch target
+- No horizontal scrolling at any screen size
+- Bottom tab bar on mobile (`< md:`), side navigation on desktop (`md:` and up)
+- Business logic never inside components — components receive data and callbacks via props only; logic lives in `hooks/`, `lib/services/`, `app/api/`
+- Consistent prop patterns: `variant`, `size`, `className`, `disabled`, `loading` where applicable
 
 ---
 

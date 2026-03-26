@@ -116,6 +116,7 @@ A SaaS platform for real estate investors and wholesalers that eliminates the re
 - Tailwind CSS v4 via PostCSS
 - Utility-first class composition directly in JSX
 - No CSS modules, no styled-components
+- All shared UI components live in `/components/ui/` — never create one-off component files outside the library for reusable elements
 ## Error Handling
 - No try/catch patterns observed in current codebase
 - No error boundaries implemented
@@ -201,6 +202,13 @@ A SaaS platform for real estate investors and wholesalers that eliminates the re
 - Input validation: HTML5 input type enforcement (type="number")
 - Type validation: TypeScript compile-time checks
 - Data validation: toNumber() fallbacks for string-to-number conversion
+## Architectural Rules
+- **Business logic separation (enforced every phase)**: All business logic must live in hooks, services, and API layers — never inside UI components directly. UI components receive data and callbacks via props only. This ensures the UI can be redesigned without touching business logic.
+  - Hooks (`hooks/`): data fetching, form state, derived computations
+  - Services (`lib/services/`): API calls, external integrations, data transformation
+  - API layer (`app/api/`): server-side route handlers, auth guards, metering
+  - UI components (`components/ui/`, `app/`): rendering and user interaction only — no fetch calls, no business rules, no direct data manipulation
+- **Component library (enforced every phase)**: All UI is built from the shared component library in `/components/ui/`. No one-off hardcoded styles anywhere in the codebase. Every feature in every phase consumes from this library.
 <!-- GSD:architecture-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
