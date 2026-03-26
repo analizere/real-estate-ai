@@ -2,8 +2,8 @@
 phase: 1
 slug: foundation
 status: draft
-shadcn_initialized: false
-preset: none
+shadcn_initialized: true
+preset: new-york-zinc
 created: 2026-03-25
 ---
 
