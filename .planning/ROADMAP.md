@@ -36,7 +36,7 @@ Decimal phases appear between their surrounding integers in numeric order.
 Plans:
 - [x] 01-01-PLAN.md — Infrastructure skeleton: deps, shadcn, DB schema, Better Auth config
 - [x] 01-02-PLAN.md — Component library: 17 custom components (layout, nav, data display, states)
-- [x] 01-03-PLAN.md — Auth UI pages: sign-up, sign-in, forgot/reset password, verify email
+- [ ] 01-03-PLAN.md — Auth UI pages: sign-up, sign-in, forgot/reset password, verify email
 - [x] 01-04-PLAN.md — Billing backend: Stripe checkout, freemium gating, usage metering
 - [ ] 01-05-PLAN.md — Account settings, home page, end-to-end verification checkpoint
 
