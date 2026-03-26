@@ -3,13 +3,13 @@ gsd_state_version: 1.0
 milestone: v1.0
 milestone_name: milestone
 status: Ready to execute
-stopped_at: Completed 01-04-PLAN.md
-last_updated: "2026-03-26T02:25:10.013Z"
+stopped_at: Completed 01-05-PLAN.md (Task 3 checkpoint pending)
+last_updated: "2026-03-26T02:32:55.664Z"
 progress:
   total_phases: 6
-  completed_phases: 0
+  completed_phases: 1
   total_plans: 5
-  completed_plans: 3
+  completed_plans: 5
 ---
 
 # Project State
@@ -24,7 +24,7 @@ See: .planning/PROJECT.md (updated 2026-03-25)
 ## Current Position
 
 Phase: 01 (foundation) — EXECUTING
-Plan: 4 of 5
+Plan: 5 of 5
 
 ## Performance Metrics
 
@@ -49,6 +49,7 @@ Plan: 4 of 5
 | Phase 01-foundation P01 | 8 | 3 tasks | 26 files |
 | Phase 01 P02 | 2min | 2 tasks | 17 files |
 | Phase 01-foundation P04 | 3min | 2 tasks | 7 files |
+| Phase 01-foundation P05 | 2min | 2 tasks | 5 files |
 
 ## Accumulated Context
 
@@ -67,6 +68,8 @@ Recent decisions affecting current work:
 - [Phase 01-foundation]: Stripe webhook at /api/v1/webhooks/stripe (D-10) delegates to auth.handler — Better Auth plugin handles verification and state sync
 - [Phase 01]: UserMenuDropdown uses div+state toggle (no Radix DropdownMenu) for lighter weight
 - [Phase 01-foundation]: Better Auth Stripe plugin uses upgradeSubscription/createBillingPortal (not createSubscription) -- all billing routes delegate through Better Auth API
+- [Phase 01-foundation]: Stripe Customer Portal redirect for cancel flow (simpler than custom cancel logic)
+- [Phase 01-foundation]: Sonner toast via URL param for upgrade success notification
 
 ### Pending Todos
 
@@ -81,6 +84,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-26T02:25:10.011Z
-Stopped at: Completed 01-04-PLAN.md
+Last session: 2026-03-26T02:32:55.662Z
+Stopped at: Completed 01-05-PLAN.md (Task 3 checkpoint pending)
 Resume file: None
