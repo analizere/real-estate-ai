@@ -28,10 +28,10 @@ Any address → complete investment analysis in under 60 seconds, without manual
 - [ ] Deal summary: clean, shareable analysis report per property
 
 **MVP — Platform Infrastructure**
-- [ ] Authentication and user accounts
-- [ ] Freemium gating: free tier = manual input + calculators; paid tier = automated data pull + DADU feasibility + rent estimates
-- [ ] REST API layer designed to support web, mobile, and browser plugin from day one
-- [ ] Subscription/billing integration (Stripe or equivalent)
+- [x] Authentication and user accounts — Validated in Phase 1: Foundation (Better Auth with email/password, Google OAuth, email verification, password reset)
+- [x] Freemium gating: free tier = manual input + calculators; paid tier = automated data pull + DADU feasibility + rent estimates — Validated in Phase 1: Foundation (server-enforced via requirePro() returning 402)
+- [x] REST API layer designed to support web, mobile, and browser plugin from day one — Validated in Phase 1: Foundation (versioned /api/v1/ routes)
+- [x] Subscription/billing integration (Stripe or equivalent) — Validated in Phase 1: Foundation (Stripe Checkout, portal, webhook, subscription status)
 
 **MVP — Data Strategy**
 - [ ] Pilot in Pacific NW markets (OR/WA — Portland, Seattle, and/or surrounding metros)
@@ -53,6 +53,46 @@ Any address → complete investment analysis in under 60 seconds, without manual
 - Browser plugin — post-MVP; API-first architecture enables this later
 - MLS integration — explicitly avoided at early stage; costly and gated
 - Lender marketplace and contractor cost database — long-term vision only
+- Mapping / GIS visualization layer — post-MVP; **architect for from day one** (see Long-Term Vision)
+
+## Long-Term Vision
+
+### Mapping and GIS Layer (post-MVP — architect for from day one)
+
+Integrate Mapbox for property visualization with pluggable overlay layers. All GIS data feeds directly into the DADU feasibility scoring engine, not just map display.
+
+**Overlay layers:**
+- Parcel boundaries and lot lines
+- Zoning — color-coded by zone type
+- Topographic terrain — slope and elevation (critical for DADU buildability on sloped lots)
+- FEMA flood zones
+- School district boundaries
+- Satellite imagery
+- Sewer and water service area boundaries (public sewer vs. septic)
+- Utility connection points — proximity to nearest sewer/water main
+- Planned utility expansion zones — from local utility district CIPs and city comprehensive plans. A property on septic but in a planned 2027 sewer expansion zone is a completely different investment thesis. AI should cross-reference CIP documents and surface this insight automatically.
+- Existing structure location and footprint on parcel — determines available rear yard space, setback compliance, and buildable area for DADU. Sources: Microsoft Building Footprints dataset (free, national coverage), county assessor GIS, OpenStreetMap.
+- Parcel frontage — street and alley frontage measured from parcel geometry. Lots with alley frontage are significantly better DADU candidates (separate entrance, independent access). Calculated programmatically from parcel geometry already pulled from county GIS.
+
+**Data sources:**
+- Mapbox — base maps, terrain, satellite imagery
+- County GIS portals — parcels, zoning, building footprints, utility boundaries
+- Microsoft Building Footprints — free, national coverage
+- Local utility district CIPs — planned sewer/water expansion timelines
+- USGS — elevation and topographic data
+- FEMA — flood zone boundaries
+- OpenStreetMap — supplemental building and infrastructure data
+
+**Combined DADU feasibility output (when GIS layer is active):**
+- Total lot size and available rear yard after accounting for existing structure placement
+- Existing structure footprint and position relative to property lines
+- Street and alley frontage measurements
+- Setback compliance given existing structure location
+- Estimated maximum buildable DADU footprint
+- Current utility status (sewer/water/septic)
+- Planned utility expansion timeline if applicable
+- Slope/terrain assessment for buildability
+- Visual Mapbox display of all of the above on the parcel map
 
 ## Context
 
@@ -111,4 +151,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-25 after initialization*
+*Last updated: 2026-03-25 after Phase 1: Foundation completion*
