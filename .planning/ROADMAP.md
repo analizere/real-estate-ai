@@ -31,7 +31,15 @@ Decimal phases appear between their surrounding integers in numeric order.
   3. User can subscribe to the paid tier via Stripe, view their subscription status, and cancel from account settings
   4. Any attempt to call a paid-tier feature from a free-tier account is rejected at the Route Handler level, not just in the UI
   5. Every automated data lookup is recorded in a usage log tied to the user account before the lookup executes
-**Plans**: TBD
+**Plans**: 5 plans
+
+Plans:
+- [ ] 01-01-PLAN.md — Infrastructure skeleton: deps, shadcn, DB schema, Better Auth config
+- [ ] 01-02-PLAN.md — Component library: 17 custom components (layout, nav, data display, states)
+- [ ] 01-03-PLAN.md — Auth UI pages: sign-up, sign-in, forgot/reset password, verify email
+- [ ] 01-04-PLAN.md — Billing backend: Stripe checkout, freemium gating, usage metering
+- [ ] 01-05-PLAN.md — Account settings, home page, end-to-end verification checkpoint
+
 **UI hint**: yes
 
 ### Phase 2: Free Tier Calculator
@@ -101,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/TBD | Not started | - |
+| 1. Foundation | 0/5 | Planning complete | - |
 | 2. Free Tier Calculator | 0/TBD | Not started | - |
 | 3. Investor Profile & Onboarding | 0/TBD | Not started | - |
 | 4. DADU Feasibility Engine | 0/TBD | Not started | - |
