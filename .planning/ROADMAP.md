@@ -34,10 +34,10 @@ Decimal phases appear between their surrounding integers in numeric order.
 **Plans**: 5 plans
 
 Plans:
-- [ ] 01-01-PLAN.md — Infrastructure skeleton: deps, shadcn, DB schema, Better Auth config
-- [ ] 01-02-PLAN.md — Component library: 17 custom components (layout, nav, data display, states)
+- [x] 01-01-PLAN.md — Infrastructure skeleton: deps, shadcn, DB schema, Better Auth config
+- [x] 01-02-PLAN.md — Component library: 17 custom components (layout, nav, data display, states)
 - [ ] 01-03-PLAN.md — Auth UI pages: sign-up, sign-in, forgot/reset password, verify email
-- [ ] 01-04-PLAN.md — Billing backend: Stripe checkout, freemium gating, usage metering
+- [x] 01-04-PLAN.md — Billing backend: Stripe checkout, freemium gating, usage metering
 - [ ] 01-05-PLAN.md — Account settings, home page, end-to-end verification checkpoint
 
 **UI hint**: yes
@@ -109,7 +109,7 @@ Phases execute in numeric order: 1 → 2 → 3 → 4 → 5 → 6
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
-| 1. Foundation | 0/5 | Planning complete | - |
+| 1. Foundation | 1/5 | In Progress|  |
 | 2. Free Tier Calculator | 0/TBD | Not started | - |
 | 3. Investor Profile & Onboarding | 0/TBD | Not started | - |
 | 4. DADU Feasibility Engine | 0/TBD | Not started | - |

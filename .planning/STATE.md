@@ -1,3 +1,17 @@
+---
+gsd_state_version: 1.0
+milestone: v1.0
+milestone_name: milestone
+status: Ready to execute
+stopped_at: Completed 01-04-PLAN.md
+last_updated: "2026-03-26T02:25:10.013Z"
+progress:
+  total_phases: 6
+  completed_phases: 0
+  total_plans: 5
+  completed_plans: 3
+---
+
 # Project State
 
 ## Project Reference
@@ -5,20 +19,17 @@
 See: .planning/PROJECT.md (updated 2026-03-25)
 
 **Core value:** Any address → complete investment analysis in under 60 seconds, without manual research.
-**Current focus:** Phase 1 — Foundation
+**Current focus:** Phase 01 — foundation
 
 ## Current Position
 
-Phase: 1 of 6 (Foundation)
-Plan: 0 of TBD in current phase
-Status: Ready to plan
-Last activity: 2026-03-25 — Roadmap created; all 49 v1 requirements mapped across 6 phases
-
-Progress: [░░░░░░░░░░] 0%
+Phase: 01 (foundation) — EXECUTING
+Plan: 4 of 5
 
 ## Performance Metrics
 
 **Velocity:**
+
 - Total plans completed: 0
 - Average duration: —
 - Total execution time: 0 hours
@@ -30,10 +41,14 @@ Progress: [░░░░░░░░░░] 0%
 | - | - | - | - |
 
 **Recent Trend:**
+
 - Last 5 plans: —
 - Trend: —
 
 *Updated after each plan completion*
+| Phase 01-foundation P01 | 8 | 3 tasks | 26 files |
+| Phase 01 P02 | 2min | 2 tasks | 17 files |
+| Phase 01-foundation P04 | 3min | 2 tasks | 7 files |
 
 ## Accumulated Context
 
@@ -47,6 +62,11 @@ Recent decisions affecting current work:
 - [Init]: DADU zoning rules stored as DB rows (never TypeScript constants) — engine reads RuleSet[] passed as arguments
 - [Init]: Market pipelines use adapter pattern with registry — zero service-layer conditionals per market
 - [Init]: Phase 4 depends on Phase 1 (not Phase 3) — DADU engine is unblocked by profile/onboarding; billing gate is the only hard dependency
+- [Phase 01-foundation]: shadcn v4.1 uses radix-nova preset (renamed from new-york) — identical functionality, different CLI API
+- [Phase 01-foundation]: forgetPassword renamed to requestPasswordReset in better-auth 1.5.6 client
+- [Phase 01-foundation]: Stripe webhook at /api/v1/webhooks/stripe (D-10) delegates to auth.handler — Better Auth plugin handles verification and state sync
+- [Phase 01]: UserMenuDropdown uses div+state toggle (no Radix DropdownMenu) for lighter weight
+- [Phase 01-foundation]: Better Auth Stripe plugin uses upgradeSubscription/createBillingPortal (not createSubscription) -- all billing routes delegate through Better Auth API
 
 ### Pending Todos
 
@@ -61,6 +81,6 @@ None yet.
 
 ## Session Continuity
 
-Last session: 2026-03-25
-Stopped at: Roadmap created; ready to plan Phase 1
+Last session: 2026-03-26T02:25:10.011Z
+Stopped at: Completed 01-04-PLAN.md
 Resume file: None
