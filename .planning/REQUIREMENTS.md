@@ -7,11 +7,11 @@
 
 ### Authentication
 
-- [ ] **AUTH-01**: User can create an account with email and password
-- [ ] **AUTH-02**: User can sign in with Google OAuth
-- [ ] **AUTH-03**: User receives a verification email after signup and must confirm before accessing paid features
-- [ ] **AUTH-04**: User can reset password via an emailed link
-- [ ] **AUTH-05**: User session persists across browser refresh without requiring re-login
+- [x] **AUTH-01**: User can create an account with email and password
+- [x] **AUTH-02**: User can sign in with Google OAuth
+- [x] **AUTH-03**: User receives a verification email after signup and must confirm before accessing paid features
+- [x] **AUTH-04**: User can reset password via an emailed link
+- [x] **AUTH-05**: User session persists across browser refresh without requiring re-login
 
 ### Onboarding
 
@@ -68,12 +68,12 @@
 
 ### Billing & Freemium
 
-- [ ] **BILL-01**: Free-tier users can run unlimited BRRRR and cash flow analyses using manual inputs with no paywall
-- [ ] **BILL-02**: Automated public records pull, DADU feasibility analysis, and rent estimation are gated behind the paid tier
-- [ ] **BILL-03**: User can subscribe to the paid tier via Stripe (monthly and annual options)
-- [ ] **BILL-04**: User can view their current subscription status and cancel from account settings
-- [ ] **BILL-05**: Each automated data lookup (public records pull, rent estimate) is metered and logged per user account
-- [ ] **BILL-06**: Free-tier user is shown a contextual upgrade prompt when they attempt to use a paid feature
+- [x] **BILL-01**: Free-tier users can run unlimited BRRRR and cash flow analyses using manual inputs with no paywall
+- [x] **BILL-02**: Automated public records pull, DADU feasibility analysis, and rent estimation are gated behind the paid tier
+- [x] **BILL-03**: User can subscribe to the paid tier via Stripe (monthly and annual options)
+- [x] **BILL-04**: User can view their current subscription status and cancel from account settings
+- [x] **BILL-05**: Each automated data lookup (public records pull, rent estimate) is metered and logged per user account
+- [x] **BILL-06**: Free-tier user is shown a contextual upgrade prompt when they attempt to use a paid feature
 
 ### Platform & UX
 
@@ -83,18 +83,18 @@
 
 ### API Layer
 
-- [ ] **API-01**: All property analysis, auth, and data lookup functionality is exposed via a versioned REST API (`/api/v1/`) from day one
-- [ ] **API-02**: All external API calls (public records, GIS, Rentcast) are made server-side only — never from client components
-- [ ] **API-03**: The API design supports future consumption by a mobile app and browser plugin without modification to existing endpoints
+- [x] **API-01**: All property analysis, auth, and data lookup functionality is exposed via a versioned REST API (`/api/v1/`) from day one
+- [x] **API-02**: All external API calls (public records, GIS, Rentcast) are made server-side only — never from client components
+- [x] **API-03**: The API design supports future consumption by a mobile app and browser plugin without modification to existing endpoints
 
 ### Component Library
 
-- [ ] **COMP-01**: Before building any feature UI, a reusable component library exists in `/components/ui/` as the foundation — every feature in every phase consumes exclusively from this library; no one-off hardcoded styles anywhere in the codebase
-- [ ] **COMP-02**: Design tokens (colors, typography scale, spacing, border radius, shadows) are defined as CSS variables and Tailwind config so changes propagate everywhere automatically; dark mode is built in from day one using CSS variable switching
-- [ ] **COMP-03**: Core components are built before any feature uses them: Button (primary/secondary/ghost/destructive variants), Input, Select, Textarea, Checkbox, Radio, Card, Badge, Tooltip, Modal/Dialog, Toast/notification system, Loading spinner, Skeleton loader, Empty state, Error state
-- [ ] **COMP-04**: Form, layout, data display, and navigation component families are built before the features that need them: FormField wrapper (label + error + helper text), layout primitives (Page, Section, Container, Grid, Sidebar), data display (Stat card, Data table, Property card, Analysis summary card), navigation (top nav desktop, bottom tab bar mobile, user menu dropdown, mobile hamburger menu)
-- [ ] **COMP-05**: All components are mobile-first with Tailwind breakpoints (sm/md/lg); each breakpoint feels native — desktop gets multi-column layouts, expanded navigation, richer data displays, not just a scaled mobile view; tested at 375px, 390px, 768px, and 1280px; all interactive elements have minimum 44×44px touch targets; no horizontal scrolling at any screen size
-- [ ] **COMP-06**: Business logic never lives inside UI components — all logic lives in hooks (`hooks/`), services (`lib/services/`), and API route handlers (`app/api/`); UI components receive data and callbacks via props only
+- [x] **COMP-01**: Before building any feature UI, a reusable component library exists in `/components/ui/` as the foundation — every feature in every phase consumes exclusively from this library; no one-off hardcoded styles anywhere in the codebase
+- [x] **COMP-02**: Design tokens (colors, typography scale, spacing, border radius, shadows) are defined as CSS variables and Tailwind config so changes propagate everywhere automatically; dark mode is built in from day one using CSS variable switching
+- [x] **COMP-03**: Core components are built before any feature uses them: Button (primary/secondary/ghost/destructive variants), Input, Select, Textarea, Checkbox, Radio, Card, Badge, Tooltip, Modal/Dialog, Toast/notification system, Loading spinner, Skeleton loader, Empty state, Error state
+- [x] **COMP-04**: Form, layout, data display, and navigation component families are built before the features that need them: FormField wrapper (label + error + helper text), layout primitives (Page, Section, Container, Grid, Sidebar), data display (Stat card, Data table, Property card, Analysis summary card), navigation (top nav desktop, bottom tab bar mobile, user menu dropdown, mobile hamburger menu)
+- [x] **COMP-05**: All components are mobile-first with Tailwind breakpoints (sm/md/lg); each breakpoint feels native — desktop gets multi-column layouts, expanded navigation, richer data displays, not just a scaled mobile view; tested at 375px, 390px, 768px, and 1280px; all interactive elements have minimum 44×44px touch targets; no horizontal scrolling at any screen size
+- [x] **COMP-06**: Business logic never lives inside UI components — all logic lives in hooks (`hooks/`), services (`lib/services/`), and API route handlers (`app/api/`); UI components receive data and callbacks via props only
 
 ---
 
@@ -152,11 +152,11 @@
 
 | Requirement | Phase | Status |
 |-------------|-------|--------|
-| AUTH-01 | Phase 1 | Pending |
-| AUTH-02 | Phase 1 | Pending |
-| AUTH-03 | Phase 1 | Pending |
-| AUTH-04 | Phase 1 | Pending |
-| AUTH-05 | Phase 1 | Pending |
+| AUTH-01 | Phase 1 | Complete |
+| AUTH-02 | Phase 1 | Complete |
+| AUTH-03 | Phase 1 | Complete |
+| AUTH-04 | Phase 1 | Complete |
+| AUTH-05 | Phase 1 | Complete |
 | ONBD-01 | Phase 3 | Pending |
 | ONBD-02 | Phase 3 | Pending |
 | ONBD-03 | Phase 3 | Pending |
@@ -189,24 +189,24 @@
 | RPRT-01 | Phase 6 | Pending |
 | RPRT-02 | Phase 6 | Pending |
 | RPRT-03 | Phase 6 | Pending |
-| BILL-01 | Phase 1 | Pending |
-| BILL-02 | Phase 1 | Pending |
-| BILL-03 | Phase 1 | Pending |
-| BILL-04 | Phase 1 | Pending |
-| BILL-05 | Phase 1 | Pending |
-| BILL-06 | Phase 1 | Pending |
+| BILL-01 | Phase 1 | Complete |
+| BILL-02 | Phase 1 | Complete |
+| BILL-03 | Phase 1 | Complete |
+| BILL-04 | Phase 1 | Complete |
+| BILL-05 | Phase 1 | Complete |
+| BILL-06 | Phase 1 | Complete |
 | UX-01 | Phase 6 | Pending |
 | UX-02 | Phase 6 | Pending |
 | UX-03 | Phase 6 | Pending |
-| API-01 | Phase 1 | Pending |
-| API-02 | Phase 1 | Pending |
-| API-03 | Phase 1 | Pending |
-| COMP-01 | Phase 1 | Pending |
-| COMP-02 | Phase 1 | Pending |
-| COMP-03 | Phase 1 | Pending |
-| COMP-04 | Phase 1 | Pending |
-| COMP-05 | Phase 1 | Pending |
-| COMP-06 | Phase 1 | Pending |
+| API-01 | Phase 1 | Complete |
+| API-02 | Phase 1 | Complete |
+| API-03 | Phase 1 | Complete |
+| COMP-01 | Phase 1 | Complete |
+| COMP-02 | Phase 1 | Complete |
+| COMP-03 | Phase 1 | Complete |
+| COMP-04 | Phase 1 | Complete |
+| COMP-05 | Phase 1 | Complete |
+| COMP-06 | Phase 1 | Complete |
 
 **Coverage:**
 - v1 requirements: 55 total
