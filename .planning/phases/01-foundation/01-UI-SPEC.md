@@ -71,19 +71,19 @@ Exceptions:
 | Role | Size | Weight | Line Height |
 |------|------|--------|-------------|
 | Body | 16px | 400 (regular) | 1.5 |
-| Label | 14px | 500 (medium) | 1.4 |
+| Label | 14px | 400 (regular) | 1.4 |
 | Heading | 24px | 600 (semibold) | 1.2 |
-| Display | 28px | 700 (bold) | 1.15 |
+| Display | 28px | 600 (semibold) | 1.15 |
 
 **Font family:** Geist Sans (`var(--font-geist-sans)`) — already set on `body` in `globals.css`.
 
 **Usage notes:**
 - Body (16px/400): form helper text, paragraph content, subscription status descriptions
-- Label (14px/500): form field labels, nav items, card metadata, badge text
+- Label (14px/400): form field labels, nav items, card metadata, badge text — distinguished from Body by size (14px vs 16px)
 - Heading (24px/600): auth form titles ("Sign in to your account"), page section headings
-- Display (28px/700): reserved for marketing headline on the sign-up page only ("Analyze any deal in 60 seconds")
+- Display (28px/600): reserved for marketing headline on the sign-up page only ("Analyze any deal in 60 seconds") — distinguished from Heading by size (28px vs 24px)
 
-**Weights used:** 400 (regular), 500 (medium), 600 (semibold), 700 (bold). Maximum 4 weights — Geist supports this without loading extra files.
+**Weights used:** 400 (regular), 600 (semibold). Two weights only.
 
 ---
 
@@ -144,11 +144,14 @@ All screens in Phase 1 scope:
 - White card with 32px internal padding (desktop), 24px padding on mobile
 - Platform wordmark + tagline above the card
 - No navigation header on auth pages
+- Focal point — sign-up: Display headline ("Analyze any deal in 60 seconds.") positioned above the auth card is the primary visual anchor; the card CTA button is the secondary anchor
+- Focal point — sign-in, forgot-password, reset-password, verify-email: The auth card itself is the sole visual anchor; no competing Display headline on these screens
 
 **Account settings page:**
 - Two-column layout on desktop: 240px left nav + flex-1 content area
 - Single-column stacked on mobile (nav collapses to tab row)
 - Max content width: 640px
+- Focal point — account settings: The subscription status card (top of the content area) is the primary visual anchor; it renders above all other settings sections
 
 ---
 
