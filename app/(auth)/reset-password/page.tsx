@@ -1,5 +1,6 @@
 "use client"
 
+import { Suspense } from "react"
 import { useState } from "react"
 import { useRouter, useSearchParams } from "next/navigation"
 import Link from "next/link"
@@ -10,7 +11,7 @@ import { FormField } from "@/components/ui/form-field"
 import { Button } from "@/components/ui/button"
 import { Spinner } from "@/components/ui/spinner"
 
-export default function ResetPasswordPage() {
+function ResetPasswordForm() {
   const router = useRouter()
   const searchParams = useSearchParams()
   const token = searchParams.get("token")
@@ -74,9 +75,7 @@ export default function ResetPasswordPage() {
 
     if (error) {
       setLoading(false)
-      setFormError(
-        "This reset link has expired. Request a new one."
-      )
+      setFormError("This reset link has expired. Request a new one.")
       return
     }
 
@@ -106,9 +105,7 @@ export default function ResetPasswordPage() {
               clearFieldError("newPassword")
             }}
             aria-invalid={!!errors.newPassword}
-            aria-describedby={
-              errors.newPassword ? "new-password-error" : undefined
-            }
+            aria-describedby={errors.newPassword ? "new-password-error" : undefined}
             className="min-h-[44px]"
           />
         </FormField>
@@ -127,9 +124,7 @@ export default function ResetPasswordPage() {
               clearFieldError("confirmPassword")
             }}
             aria-invalid={!!errors.confirmPassword}
-            aria-describedby={
-              errors.confirmPassword ? "confirm-password-error" : undefined
-            }
+            aria-describedby={errors.confirmPassword ? "confirm-password-error" : undefined}
             className="min-h-[44px]"
           />
         </FormField>
@@ -144,5 +139,13 @@ export default function ResetPasswordPage() {
         </Button>
       </form>
     </AuthCard>
+  )
+}
+
+export default function ResetPasswordPage() {
+  return (
+    <Suspense fallback={<AuthCard title="Reset your password"><p className="text-sm text-muted-foreground">Loading...</p></AuthCard>}>
+      <ResetPasswordForm />
+    </Suspense>
   )
 }
