@@ -1,7 +1,7 @@
 "use client";
 
+import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
-import { useEffect, useState } from "react";
 import { useAuth } from "@/hooks/use-auth";
 import { SubscriptionStatusCard } from "@/components/account/subscription-status-card";
 import { Separator } from "@/components/ui/separator";
@@ -9,7 +9,7 @@ import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 
-export default function AccountSettingsPage() {
+function AccountSettingsContent() {
   const { user, isLoading } = useAuth();
   const searchParams = useSearchParams();
   const [toastShown, setToastShown] = useState(false);
@@ -31,11 +31,8 @@ export default function AccountSettingsPage() {
   return (
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold leading-[1.2]">Account Settings</h1>
-
       <SubscriptionStatusCard />
-
       <Separator />
-
       <section className="space-y-4">
         <h2 className="text-base font-medium">Profile</h2>
         {isLoading ? (
@@ -56,13 +53,19 @@ export default function AccountSettingsPage() {
           </div>
         ) : null}
       </section>
-
       <Separator />
-
       <section className="space-y-3">
         <p className="text-sm text-muted-foreground/50">Notification preferences (coming soon)</p>
         <p className="text-sm text-muted-foreground/50">Delete account (coming soon)</p>
       </section>
     </div>
+  );
+}
+
+export default function AccountSettingsPage() {
+  return (
+    <Suspense fallback={<div className="h-16 animate-pulse rounded-md bg-muted" />}>
+      <AccountSettingsContent />
+    </Suspense>
   );
 }
