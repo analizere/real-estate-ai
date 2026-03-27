@@ -46,16 +46,16 @@ project — no new tokens needed.
 
 | Token | Value | Usage |
 |-------|-------|-------|
-| xs | 4px | Icon gaps, inline badge padding, progress bar height |
-| sm | 8px | Compact element spacing, gap between label and counter |
+| xs | 4px | Icon gaps, inline badge padding |
+| sm | 8px | Compact element spacing, gap between label and counter, progress bar track height (`h-2`) |
 | md | 16px | Default card padding, section internal spacing |
 | lg | 24px | Section-to-section spacing within Account Settings |
 | xl | 32px | Major section breaks in Account Settings |
 | 2xl | 48px | Page-level vertical rhythm |
 | 3xl | 64px | Not used in Phase 2A |
 
-Exceptions: Progress bar track height is 6px (not on scale) — this is a visual affordance
-exception for the usage meter fill bar only.
+No spacing exceptions in Phase 2A. Progress bar track height uses `h-2` (8px), which is on
+the standard 4-point scale.
 
 ---
 
@@ -69,7 +69,9 @@ in the project — no new tokens needed for Phase 2A.
 | Body | 14px | 400 | 1.5 | Usage meter descriptions, inline counter text, warning message body |
 | Label | 12px | 500 | 1.4 | Counter label ("Lookups"), "resets in X days", progress percentage |
 | Heading | 16px | 500 | 1.2 | Usage meter section headings (e.g. "Usage This Month") |
-| Display | 24px | 600 | 1.2 | Not used in Phase 2A — reserved for Phase 2B+ |
+
+Two weights declared for Phase 2A: 400 (regular) and 500 (medium). Weight 600 is not used in
+this phase — it will be declared when Display-level type is needed in Phase 2B or later.
 
 Source: Established in Phase 1 (globals.css + existing component patterns).
 
@@ -121,6 +123,7 @@ New component to create: `components/ui/usage-meter.tsx`
 - Composed from: `Card`, `Separator`, progress bar (custom `div` with Tailwind width utility), `Badge`
 - Props: `actionType: string`, `used: number`, `limit: number | 'unlimited'`, `resetsAt: Date`
 - States: normal (0–79%), warning (80–99%), exhausted (100%), unlimited (show "Unlimited" label, no bar)
+- Focal point: The primary focal point of the UsageMeter card is the progress bar fill, which communicates usage state through color (accent at 0–79% → warning at 80–99% → destructive at 100%).
 
 ---
 
