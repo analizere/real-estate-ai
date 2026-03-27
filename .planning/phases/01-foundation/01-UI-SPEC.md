@@ -339,6 +339,187 @@ No third-party registries declared for Phase 1.
 
 ---
 
+## Cross-Phase UI Patterns
+
+The following UI patterns are established here in the foundation spec and apply to all subsequent phases. Phase-specific UI-SPECs inherit these patterns.
+
+### Stale-While-Revalidate Pattern (CACHE-07)
+
+All views showing externally-sourced property data must follow this pattern:
+1. **Render immediately** with cached data — never show a loading skeleton if cached data exists
+2. **Field-level "updating..." indicator** — subtle inline indicator (e.g., pulsing dot or shimmer overlay) on the specific field being refreshed, not a page-level spinner
+3. **Swap in fresh data** when refresh completes — no full page reload; field indicator disappears and value updates in place
+4. **Data freshness badge** — small muted text below or beside the field showing "Updated 3 hours ago" or "Updating..." during refresh
+5. **Error state** — if refresh fails, keep showing cached data with a muted "Last updated {date}" indicator; do not show an error state that hides the cached value
+
+### Optimistic UI Pattern (TAG-06, UX-04)
+
+All user-initiated mutations must follow this pattern:
+1. **Instant visual update** — UI reflects the change immediately on user action (tap/click)
+2. **Background write** — database/API call fires asynchronously
+3. **Success** — no additional feedback needed (the instant update was the feedback)
+4. **Failure** — roll back the visual change to previous state and show an error toast (use the Toast component from the component library)
+5. **In-flight indicator** — no spinner or loading state for optimistic operations; the instant update is the UX
+
+Applies to: tag apply/remove, list add/remove property, save analysis, rename list.
+
+### Tag Interaction Pattern (TAG-03, TAG-05)
+
+- **Property card**: color-coded tag badges displayed below the property address, max 3 visible + "+N more" overflow
+- **Property detail page**: tag picker in quick actions bar (top of page, no scroll required); shows all 5 user tags with checkboxes and color swatches; tap to toggle
+- **Tag badge**: pill shape, 8 preset background colors with contrasting text, `Badge` component variant
+- **Single-tap interaction**: one tap on tag badge opens picker, one tap on tag in picker toggles it — never more than 2 taps to tag a property
+
+### List Interaction Pattern (LIST-01, LIST-02)
+
+- **Add to list**: dropdown picker showing existing lists + "Create new list" at bottom; selecting a list immediately adds the property (optimistic)
+- **List view**: property cards in a vertical list with tag badges visible; sort by date added; bulk select via long-press/checkbox for remove operations
+- **Export**: button in list header; for lists under 50 properties, triggers immediate download; for 50+, shows "Preparing export..." toast and notifies when ready
+- **Free tier limit**: when user has 3 lists and tries to create a 4th, show upgrade prompt (BILL-06 pattern)
+
+### Skip Trace UI Pattern (SKIP-01, SKIP-03, SKIP-04)
+
+- **Trigger**: "Get owner info" button in property detail quick actions bar
+- **Pre-lookup**: show remaining daily credits prominently ("3 of 10 lookups remaining today")
+- **In-progress**: disable button, show spinner inside button (same pattern as auth CTA loading), typical 2–5 seconds
+- **Results**: expand an inline card below the button showing phone, email, mailing address
+- **No result**: show "No contact info found" in the same inline card area
+- **Rate limit reached**: disable button, show "Daily limit reached" with upgrade prompt for free tier users
+
+### Property Detail Quick Actions Bar (PROP-07)
+
+Fixed-position bar at the top of the property detail page (below the page header, above scrollable content). Must be visible without scrolling on both mobile and desktop.
+
+| Action | Icon | Behavior |
+|--------|------|----------|
+| Tag | tag icon | Opens tag picker dropdown |
+| Add to list | list-plus icon | Opens list picker dropdown |
+| Get owner info | user-search icon | Triggers skip trace (see pattern above) |
+| Save analysis | bookmark icon | Saves current analysis state (optimistic) |
+| Share analysis | share icon | Opens share modal (link + PDF export) |
+
+Mobile: horizontal scroll if needed, minimum 44px touch targets. Desktop: all 5 actions visible in a single row.
+
+### Analytics Integration Pattern (ANLYT-01)
+
+Analytics events are not UI components but must be wired into UI interactions:
+- **Every button click** that maps to an event in REQUIREMENTS.md ANLYT-04 through ANLYT-07 must call `posthog.capture()` at the interaction point
+- **Page views** are tracked automatically by the PostHog provider — no manual calls needed
+- **Timed events** (e.g., `analysis_completed` with `time_to_complete_seconds`): start timer on `analysis_started`, capture elapsed time on completion
+- **Funnel events**: ensure events fire in the correct sequence so PostHog funnel analysis works (e.g., `analysis_address_entered` must fire before `analysis_data_pulled`)
+
+---
+
+## Binding Design Requirements (Phase 2+ — non-negotiable)
+
+> These requirements are binding constraints for Phase 2 and all subsequent phases. They are not suggestions.
+
+### Core Design Philosophy
+
+- Build like Linear (speed, keyboard-first navigation), not like PropStream (information overload and cognitive paralysis)
+- Every screen must have a single clear visual headline — the one thing an investor needs to know at a glance
+- The product must feel like it was built by people who understand real estate investing — not by a generic SaaS team
+- Target performance: address entry to full analysis display in under 2 seconds for cached properties, under 5 seconds for first-time lookups
+- Zero loading spinners anywhere in the product — skeleton loaders only, always
+- Optimistic UI for all user-initiated actions: save, tag, list add, assumption change — update UI instantly, sync to database in background, roll back gracefully on failure
+
+### The Five UX Commandments
+
+Enforce in every component and screen review:
+
+1. **Instant**: no blocking load states. Skeleton loaders fill the layout immediately while data loads. Pre-fetch adjacent data (e.g. pre-load portfolio properties on dashboard load). Investors screening 10 properties in a row will abandon a tool that makes them wait.
+2. **Scannable**: Deal Score, monthly cash flow, and DADU eligibility status must be visible and readable within 1 second of a page rendering. Use font weight, color, and spatial hierarchy aggressively. Every screen has one visual headline. Never bury the most important number.
+3. **Keyboard-friendly**: Cmd+K for global property search, arrow keys to navigate between saved properties in portfolio, Enter to open a property, Escape to go back. Every primary action has a documented keyboard shortcut. This is the Linear model — what separates tools built for experts from tools built for demos.
+4. **Mobile-first**: design for phone screen first, then expand for desktop. Minimum 44px touch targets on all interactive elements. No horizontal scrolling at any screen size. Bottom tab navigation on mobile, sidebar navigation on desktop. Test every screen at 375px (iPhone SE), 390px (iPhone 14), and 768px (iPad) before shipping.
+5. **Trust-inspiring**: no cartoonish icons, no gradients, no startup-y illustrations, no generic SaaS stock imagery. Visual language: Bloomberg Terminal meets Stripe Dashboard. Serious, data-dense, professional. Investors should feel the tool respects their expertise.
+
+### Design Benchmarks
+
+Reference these when making component and layout decisions:
+
+| Benchmark | Pattern to Reference |
+|-----------|---------------------|
+| Linear | Keyboard navigation, speed, instant feedback |
+| Stripe Dashboard | Data-dense financial display, clean typography, logical metric grouping |
+| Mashvisor | Card-based progressive disclosure, minimal clutter, clean whitespace |
+| Notion | Rich flexible pages with collapsible sections, reorderable content blocks |
+| Airtable | Powerful list/grid views with instant filtering, sorting, and grouping |
+
+### Property Intelligence Page — Information Hierarchy
+
+Enforce this exact structure on the property detail page:
+
+**Tier 1 — Above the fold (always visible, no scroll required):**
+
+| Element | Visual Priority | Notes |
+|---------|----------------|-------|
+| Deal Score badge | Largest, most visually dominant — color-coded with score number and label (Poor/Fair/Good/Strong) | An investor should make a "worth deeper analysis" decision from Tier 1 alone in under 5 seconds |
+| Monthly cash flow | Second most prominent metric | |
+| Cash-on-cash return | Third | |
+| DADU eligibility | Pass/fail/conditional badge with single-line reason (e.g. "Feasible — detached ADU up to 800 sqft permitted") | |
+| Total investment required | Fifth | |
+
+**Tier 2 — Scrollable detail (visible by default, individually collapsible):**
+
+- BRRRR phase breakdown (Buy / Rehab / Rent / Refinance phase cards)
+- DADU feasibility checklist with green/amber/red indicators per rule
+- Sensitivity analysis table (see dedicated section below)
+- Rent comps from Rentcast with distance and comparable details
+
+**Tier 3 — Collapsed by default (expandable on demand):**
+
+- Full property attribute details
+- Tax and ownership history
+- Zoning code reference (actual rules, not just summary)
+- GIS parcel data and raw data sources
+
+### Sensitivity Analysis
+
+Sensitivity analysis is a first-class feature — not a tooltip, footnote, or modal. It is a visible, prominent section in Tier 2.
+
+**Assumption changes displayed:**
+
+| Variable | Scenarios |
+|----------|-----------|
+| Rent | Drops 10%, 15%, 20% |
+| Rehab costs | Rise 10%, 20%, 30% |
+| Interest rate | ±0.5%, ±1% |
+| Vacancy rate | Change from 5% to 10%, 15% |
+
+Display as a clean table with color-coded outcomes: green (still positive cash flow), amber (marginal), red (negative cash flow).
+
+**Competitive differentiator:** DealCheck has basic scenario sliders but no sensitivity table. PropStream has nothing. No competitor shows investors downside scenarios systematically. Investors trust tools that show what could go wrong.
+
+### Paywall and Upgrade Prompt Design
+
+- Never blur, hide, or obscure data in Tier 2 preview — show it clearly and completely
+- Gate the action, not the visibility: when a free user tries to include preview data in analysis, save, or export — show the upgrade prompt at that moment of intent
+- Upgrade prompts must be contextual: "Upgrade to Pro to include rent estimates in your BRRRR analysis" — not a generic "Upgrade to Pro"
+- Never use a generic paywall modal — always show what specific capability the user is trying to access and what Pro unlocks
+
+### Anti-Patterns (explicitly prohibited)
+
+These must never appear in the product:
+
+- Loading spinners anywhere — skeleton loaders only
+- More than 5 metrics visible above the fold on any screen
+- Form-first flows — data must auto-populate from data pull, user only overrides specific fields
+- Blurred or hidden data behind a paywall — see paywall design above
+- PropStream-style filter overload — never show more than 8 filters at once
+- DealCheck-style portfolio as file drawer — portfolio is a first-class analysis and comparison surface
+- REIPro-style feature sprawl — never add lifecycle features (CRM, lease management, marketing) at the expense of analysis depth
+- Hardcoded plan checks in UI components — always use the central gating service
+
+### Property Journey
+
+Enforce this flow in all navigation and information architecture decisions:
+
+1. **Phase 1 — Search**: single search bar as the hero element on the dashboard, any-address lookup, autocomplete with county assessor data, recent searches visible below. This is the entry point — make it the most prominent thing on the screen.
+2. **Phase 2 — Understand**: Property Intelligence page with all three tiers as specified above. This is where ReVested wins.
+3. **Phase 3 — Manage**: Portfolio with lists, tags, comparison view, and deal reports. This is where ReVested retains.
+
+---
+
 ## Checker Sign-Off
 
 - [ ] Dimension 1 Copywriting: PASS

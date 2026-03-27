@@ -105,6 +105,12 @@ None - no external service configuration required for this plan (services config
 - Task 3 (human verification of end-to-end auth + billing flow) is pending -- requires env vars configured and Stripe CLI running
 - Phase 2 can proceed with calculator UI built on top of the component library
 
+## Self-Check: PASSED
+
+- All 5 created/modified files verified present
+- Commit bcb85ed (Task 1) verified in git log
+- Commit 745a969 (Task 2) verified in git log
+
 ---
 *Phase: 01-foundation*
 *Completed: 2026-03-26*
