@@ -249,7 +249,7 @@ Create `tests/unit/feature-tiers.test.ts` with tests for all behaviors above. Ru
    export * from "./feature-overrides";
    ```
 
-4. Run `npm run db:generate` to produce migration SQL. Review the output for destructive operations (the `lookupType` → `actionType` rename may need manual migration SQL adjustment).
+4. Run `npm run db:generate` to produce migration SQL. **CRITICAL: Review the generated migration SQL for destructive operations.** The `lookupType` -> `actionType` rename will likely generate a DROP COLUMN + ADD COLUMN pair instead of a safe RENAME COLUMN. If so, manually edit the migration SQL file to use `ALTER TABLE usage_log RENAME COLUMN lookup_type TO action_type` instead of dropping and re-adding the column (which would destroy existing data).
 
 5. Create `tests/unit/schema-validation.test.ts` that imports both schemas and validates:
    - featureOverrides table exports correctly
@@ -258,7 +258,7 @@ Create `tests/unit/feature-tiers.test.ts` with tests for all behaviors above. Ru
    - featureOverrides has all 12 columns
   </action>
   <verify>
-    <automated>cd /Users/sticky_iqqy_iqqy/real-estate-ai && npx vitest run tests/unit/schema-validation.test.ts --reporter=verbose && npm run db:generate</automated>
+    <automated>cd /Users/sticky_iqqy_iqqy/real-estate-ai && npx vitest run tests/unit/schema-validation.test.ts --reporter=verbose && npm run db:generate && echo "--- MIGRATION REVIEW: checking for destructive operations ---" && for f in $(ls drizzle/*.sql 2>/dev/null | tail -1); do echo "Reviewing: $f"; grep -n "DROP COLUMN\|ALTER.*DROP\|DROP TABLE" "$f" && echo "WARNING: Destructive operation detected - verify lookupType->actionType uses RENAME COLUMN, not DROP+ADD" || echo "OK: No destructive operations found"; done</automated>
   </verify>
   <acceptance_criteria>
     - lib/schema/feature-overrides.ts contains `export const featureOverrides = pgTable("feature_overrides"`
@@ -275,8 +275,9 @@ Create `tests/unit/feature-tiers.test.ts` with tests for all behaviors above. Ru
     - lib/schema/usage-log.ts contains `metadata: jsonb("metadata")`
     - lib/schema/index.ts contains `export * from "./feature-overrides"`
     - npm run db:generate exits without error
+    - Migration SQL uses RENAME COLUMN for lookupType->actionType (not DROP+ADD)
   </acceptance_criteria>
-  <done>Feature overrides table schema with 3 indexes created. Usage_log schema expanded with 5 new columns. Both re-exported from schema/index.ts. Migration SQL generated.</done>
+  <done>Feature overrides table schema with 3 indexes created. Usage_log schema expanded with 5 new columns. Both re-exported from schema/index.ts. Migration SQL generated and reviewed for destructive operations.</done>
 </task>
 
 </tasks>
@@ -295,7 +296,7 @@ Create `tests/unit/feature-tiers.test.ts` with tests for all behaviors above. Ru
 - feature_overrides Drizzle table has 12 columns and 3 indexes
 - usage_log table has 5 new columns (actionType replacing lookupType, costEstimateCents, apiProvider, metadata, planAtTimeOfAction)
 - All schemas re-exported from lib/schema/index.ts
-- Migration SQL generated
+- Migration SQL generated and reviewed for destructive rename operations
 </success_criteria>
 
 <output>

@@ -2,7 +2,7 @@
 phase: 02A-infrastructure-services
 plan: 06
 type: execute
-wave: 3
+wave: 4
 depends_on: [02A-02, 02A-03, 02A-04, 02A-05]
 files_modified:
   - lib/services/posthog-events.ts
@@ -10,20 +10,21 @@ files_modified:
   - app/api/v1/enrichment/stage1/route.ts
   - tests/unit/integration-wiring.test.ts
 autonomous: false
-requirements: [TIER-04, TIER-06, ANLYT-08, ANLYT-09, ANLYT-10, ANLYT-11, SESS-07, COHRT-01, COHRT-02, COHRT-03, COHRT-04, COHRT-05, DATA-03, DATA-10, METER-01]
+requirements: [TIER-04, TIER-06, ANLYT-08, ANLYT-10, ANLYT-11, SESS-05, SESS-07, COHRT-01, COHRT-02, COHRT-03, COHRT-04, COHRT-05, DATA-03, DATA-10, METER-01]
 
 must_haves:
   truths:
     - "Stripe webhook fires PostHog subscription events on plan changes"
     - "Stage 1 enrichment endpoint exists, calls DataEnrichmentService, logs usage before execution"
-    - "PostHog feature flags infrastructure is configured (ANLYT-11/D-27)"
+    - "Gated route returns 403 with session property set for paywall-hit-without-upgrade flagging (SESS-05)"
+    - "Feature flags are documented for manual PostHog dashboard creation and SDK usage patterns are commented in code (ANLYT-11/D-27)"
     - "PostHog cohorts and funnels are documented for manual configuration (COHRT-01-05, ANLYT-08)"
   artifacts:
     - path: "app/api/v1/enrichment/stage1/route.ts"
       provides: "POST endpoint for Stage 1 data enrichment with gating + metering"
       exports: ["POST"]
     - path: "tests/unit/integration-wiring.test.ts"
-      provides: "Integration tests verifying gating -> metering -> enrichment flow"
+      provides: "Integration tests verifying gating -> metering -> enrichment flow and Stripe webhook PostHog wiring"
   key_links:
     - from: "app/api/v1/enrichment/stage1/route.ts"
       to: "lib/services/gating.ts"
@@ -44,10 +45,10 @@ must_haves:
 ---
 
 <objective>
-Wire all Phase 2A services together in the enrichment endpoint (the canonical example of gating + metering + enrichment + analytics working together), add PostHog events to the Stripe webhook, and create the PostHog dashboard configuration checklist for manual setup.
+Wire all Phase 2A services together in the enrichment endpoint (the canonical example of gating + metering + enrichment + analytics working together), add PostHog events to the Stripe webhook, add SESS-05 paywall-without-upgrade session flagging, and create the PostHog dashboard configuration checklist for manual setup.
 
-Purpose: This plan proves the entire Phase 2A infrastructure works end-to-end: a request flows through gating check -> usage metering -> data enrichment -> analytics event capture. It also connects PostHog to subscription lifecycle.
-Output: Stage 1 enrichment route, Stripe webhook PostHog wiring, integration tests, PostHog dashboard config checklist.
+Purpose: This plan proves the entire Phase 2A infrastructure works end-to-end: a request flows through gating check -> usage metering -> data enrichment -> analytics event capture. It also connects PostHog to subscription lifecycle and ensures paywall interactions are tracked for session flagging.
+Output: Stage 1 enrichment route, Stripe webhook PostHog wiring, SESS-05 session property, integration tests, PostHog dashboard config checklist.
 </objective>
 
 <execution_context>
@@ -112,7 +113,7 @@ export enum ActionType { address_lookup_stage1 = 'address_lookup_stage1', ... }
 <tasks>
 
 <task type="auto">
-  <name>Task 1: Create Stage 1 enrichment endpoint with full gating + metering + analytics wiring</name>
+  <name>Task 1: Create Stage 1 enrichment endpoint with full gating + metering + analytics wiring and SESS-05 paywall flagging</name>
   <files>app/api/v1/enrichment/stage1/route.ts, tests/unit/integration-wiring.test.ts</files>
   <read_first>
     - lib/services/gating.ts (checkFeatureAccess — from Plan 03)
@@ -121,7 +122,7 @@ export enum ActionType { address_lookup_stage1 = 'address_lookup_stage1', ... }
     - lib/services/posthog-server.ts (captureServerEvent — from Plan 02)
     - lib/config/feature-tiers.ts (Feature.STAGE1_LOOKUP, ActionType.address_lookup_stage1)
     - app/api/v1/billing/checkout/route.ts (existing route handler pattern — follow same style)
-    - .planning/phases/02A-infrastructure-services/02A-CONTEXT.md (D-12: log before execution, D-25: server-side events)
+    - .planning/phases/02A-infrastructure-services/02A-CONTEXT.md (D-12: log before execution, D-25: server-side events, D-36: flag paywall-without-upgrade sessions)
     - .planning/phases/02A-infrastructure-services/02A-RESEARCH.md (Pitfall 5: logging before execution)
     - node_modules/next/dist/docs/ (check for Route Handler changes per AGENTS.md)
   </read_first>
@@ -154,6 +155,18 @@ export async function POST(request: NextRequest) {
   const userTier = await getUserTier(auth.userId)
   const gateResult = await checkFeatureAccess(auth.userId, Feature.STAGE1_LOOKUP, userTier)
   if (!gateResult.allowed) {
+    // SESS-05: Flag this session as "paywall hit without upgrade" for PostHog session analysis
+    // This fires a server-side event with a session property that PostHog can filter on.
+    await captureServerEvent({
+      distinctId: auth.userId,
+      event: 'paywall_hit',
+      properties: {
+        feature: Feature.STAGE1_LOOKUP,
+        reason: gateResult.reason,
+        user_tier: userTier,
+        $set: { last_paywall_hit_at: new Date().toISOString() }, // person property for cohort filtering
+      },
+    })
     return NextResponse.json({
       error: "feature_gated",
       reason: gateResult.reason,
@@ -171,6 +184,16 @@ export async function POST(request: NextRequest) {
     planAtTimeOfAction: userTier,
   })
   if (!usageResult.allowed) {
+    // SESS-05: Also flag limit-reached as paywall hit
+    await captureServerEvent({
+      distinctId: auth.userId,
+      event: 'paywall_hit',
+      properties: {
+        feature: Feature.STAGE1_LOOKUP,
+        reason: 'LIMIT_REACHED',
+        user_tier: userTier,
+      },
+    })
     return NextResponse.json({
       error: "limit_reached",
       reason: usageResult.gatingResponse.reason,
@@ -226,6 +249,10 @@ Create `tests/unit/integration-wiring.test.ts` — tests that verify:
 - On success, updateUsageStatus called with 'success'
 - On failure, updateUsageStatus called with 'failed'
 - No PII in any captureServerEvent properties (no raw address)
+- SESS-05: When gating returns allowed:false, captureServerEvent fires 'paywall_hit' event with feature and reason properties
+- SESS-05: When usage limit reached (429), captureServerEvent fires 'paywall_hit' event with reason 'LIMIT_REACHED'
+- Stripe webhook: trackSubscriptionStarted fires when customer.subscription.created event is processed (mock test)
+- Stripe webhook: trackSubscriptionCancelled fires when subscription is cancelled/deleted (mock test)
   </action>
   <verify>
     <automated>cd /Users/sticky_iqqy_iqqy/real-estate-ai && npx vitest run tests/unit/integration-wiring.test.ts --reporter=verbose</automated>
@@ -240,9 +267,13 @@ Create `tests/unit/integration-wiring.test.ts` — tests that verify:
     - app/api/v1/enrichment/stage1/route.ts contains `stage1_data_pull_completed`
     - app/api/v1/enrichment/stage1/route.ts contains `updateUsageStatus`
     - app/api/v1/enrichment/stage1/route.ts contains `address_hash` (not raw address)
+    - app/api/v1/enrichment/stage1/route.ts contains `paywall_hit` (SESS-05 event)
+    - app/api/v1/enrichment/stage1/route.ts contains `last_paywall_hit_at` (SESS-05 person property)
+    - tests/unit/integration-wiring.test.ts contains `paywall_hit` (SESS-05 test)
+    - tests/unit/integration-wiring.test.ts contains `trackSubscriptionStarted` (Stripe webhook test)
     - tests/unit/integration-wiring.test.ts exits 0
   </acceptance_criteria>
-  <done>Stage 1 enrichment endpoint demonstrates the full Phase 2A flow: auth -> gating -> metering -> server-side analytics -> enrichment -> status update. No PII in events. Tests verify ordering.</done>
+  <done>Stage 1 enrichment endpoint demonstrates the full Phase 2A flow: auth -> gating -> metering -> server-side analytics -> enrichment -> status update. SESS-05 paywall_hit event fires on 403/429 responses. No PII in events. Tests verify ordering, SESS-05, and Stripe webhook PostHog wiring.</done>
 </task>
 
 <task type="auto">
@@ -309,12 +340,14 @@ Create `tests/unit/integration-wiring.test.ts` — tests that verify:
   <name>Task 3: PostHog Dashboard Configuration</name>
   <files>N/A — PostHog web UI configuration only</files>
   <action>
-User must manually configure PostHog dashboard items that cannot be done via code (Pitfall 6 from RESEARCH.md). All items are listed in the how-to-verify section below. This covers COHRT-01 through COHRT-05, ANLYT-08, SESS-04, SESS-06, ANLYT-11 feature flags, and SESS-07 founder commitment.
+User must manually configure PostHog dashboard items that cannot be done via code (Pitfall 6 from RESEARCH.md). All items are listed in the how-to-verify section below. This covers COHRT-01 through COHRT-05, ANLYT-08, SESS-04, SESS-05, SESS-06, ANLYT-11 feature flags, and SESS-07 founder commitment.
   </action>
   <what-built>
-All Phase 2A code infrastructure is complete: PostHog SDK integrated, session recording configured, lifecycle events wired, gating/metering/enrichment services built and connected.
+All Phase 2A code infrastructure is complete: PostHog SDK integrated, session recording configured, lifecycle events wired, gating/metering/enrichment services built and connected. SESS-05 paywall_hit events fire from code on 403/429 responses.
 
 The following items require MANUAL configuration in the PostHog web UI (Pitfall 6 from RESEARCH.md — cohorts/funnels are UI work, not code).
+
+IMPORTANT: Phase 2B is blocked until this task is complete. PostHog must be configured before any Phase 2B feature events can be analyzed.
   </what-built>
   <how-to-verify>
 Log into PostHog Dashboard (posthog.com) and configure:
@@ -344,7 +377,7 @@ Log into PostHog Dashboard (posthog.com) and configure:
 **4. Session Recording Flags (SESS-04, SESS-05 / D-35, D-36):**
 - Settings -> Session Recording:
   - Enable rage click detection (SESS-04)
-  - Note: "paywall without upgrade" flag requires custom tagging — this will be automated when paywall events fire in Phase 2B
+  - SESS-05: Create a saved filter/view for sessions containing the 'paywall_hit' event — label it "Paywall Without Upgrade". This uses the paywall_hit events fired by the enrichment endpoint on 403/429 responses. Sessions where paywall_hit fires but subscription_started does NOT fire within the same session are the target cohort.
 
 **5. Feature Flags (ANLYT-11 / D-27):**
 - Feature Flags -> New:
@@ -355,7 +388,7 @@ Log into PostHog Dashboard (posthog.com) and configure:
 - Commit to reviewing 10 recorded sessions per week during beta
   </how-to-verify>
   <verify>Manual verification in PostHog dashboard — see how-to-verify steps above</verify>
-  <done>All PostHog dashboard items configured: 6 cohorts, 5 funnels, heatmaps on 3 pages, rage click detection enabled, 2 feature flags created, founder committed to weekly session review.</done>
+  <done>All PostHog dashboard items configured: 6 cohorts, 5 funnels, heatmaps on 3 pages, rage click detection enabled, paywall-without-upgrade session filter created (SESS-05), 2 feature flags created, founder committed to weekly session review.</done>
   <resume-signal>Type "posthog configured" when all items above are set up in the PostHog dashboard, or describe which items need help.</resume-signal>
 </task>
 
@@ -367,18 +400,22 @@ Log into PostHog Dashboard (posthog.com) and configure:
 - `grep -r "captureServerEvent" app/api/` — server-side events in enrichment route and webhook
 - `grep -r "logAndCheckUsage" app/api/` — usage logged before execution
 - `grep -r "checkFeatureAccess" app/api/` — gating checks in routes
+- `grep "paywall_hit" app/api/v1/enrichment/stage1/route.ts` — SESS-05 event fires
 </verification>
 
 <success_criteria>
 - Stage 1 enrichment endpoint demonstrates full flow: auth -> gating -> metering -> analytics -> enrichment
+- SESS-05: paywall_hit event fires server-side when gating returns 403 or usage returns 429
 - Stripe webhook fires subscription_started/subscription_cancelled to PostHog
 - Server-side events fire for data pull start/complete (ANLYT-10)
 - No PII in any PostHog event properties
 - PostHog cohorts configured in dashboard (COHRT-01-05)
 - PostHog funnels configured in dashboard (ANLYT-08)
-- Feature flags infrastructure ready (ANLYT-11)
+- Feature flags infrastructure documented and dashboard flags created (ANLYT-11)
 - Session recording rage click detection enabled (SESS-04)
+- Paywall-without-upgrade session filter created in PostHog (SESS-05)
 - All tests pass, build succeeds
+- Phase 2B is blocked until Task 3 (PostHog dashboard config) is complete
 </success_criteria>
 
 <output>

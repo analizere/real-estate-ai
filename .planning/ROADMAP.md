@@ -47,7 +47,7 @@ Plans:
 ### Phase 2A: Infrastructure Services
 **Goal**: The platform has a central gating service controlling feature access by tier, a usage metering pipeline that logs every cost-bearing action before it executes, PostHog analytics with session recording and cohort analysis configured, and a DataEnrichmentService skeleton defining the Stage 1/Stage 2 boundary — so every feature built in 2B and 2C ships already gated, metered, and instrumented.
 **Depends on**: Phase 1
-**Requirements**: TIER-01, TIER-02, TIER-03, TIER-04, TIER-05, TIER-06, TIER-07, METER-01, METER-02, METER-04, METER-05, METER-08, METER-09, METER-10, ANLYT-01, ANLYT-02, ANLYT-03, ANLYT-04, ANLYT-08, ANLYT-09, ANLYT-10, ANLYT-11, SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SESS-07, COHRT-01, COHRT-02, COHRT-03, COHRT-04, COHRT-05, DATA-01, DATA-02, DATA-03, DATA-05, DATA-06, DATA-07, DATA-08, DATA-09, DATA-10
+**Requirements**: TIER-01, TIER-02, TIER-03, TIER-04, TIER-05, TIER-06, TIER-07, METER-01, METER-02, METER-04, METER-05, METER-08, METER-09, METER-10, ANLYT-01, ANLYT-02, ANLYT-03, ANLYT-04, ANLYT-08, ANLYT-10, ANLYT-11, SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06, SESS-07, COHRT-01, COHRT-02, COHRT-03, COHRT-04, COHRT-05, DATA-01, DATA-02, DATA-03, DATA-05, DATA-06, DATA-07, DATA-08, DATA-09, DATA-10
 **Success Criteria** (what must be TRUE):
   1. A single configuration layer defines feature-to-tier assignments (Tier 1/2/3) — all components call this gating service, never individual plan checks
   2. Every metered action (data pulls, skip traces, saves, exports) is logged with user_id, cost estimate, and provider before execution — verified by integration test
@@ -57,13 +57,15 @@ Plans:
   6. Soft limits are enforced: 80% warning, 100% block with upgrade prompt, beta override sets all to unlimited
 **Plans**: 6 plans
 
+**Note**: ANLYT-09 (operational events: address outside coverage, data inaccuracy reports) is deferred per D-30 — these events wire up in the phases where those features are built, not in infrastructure setup.
+
 Plans:
 - [ ] 02A-01-PLAN.md — Feature tier config, schemas (feature_overrides + expanded usage_log)
 - [ ] 02A-02-PLAN.md — PostHog provider, pageview tracker, server-side client, layout integration
 - [ ] 02A-03-PLAN.md — Hybrid 3-tier GatingService + full METER-01 usage metering
 - [ ] 02A-04-PLAN.md — DataEnrichmentService interface contract + stub implementations
-- [ ] 02A-05-PLAN.md — PostHog lifecycle events, usage API, UsageMeter UI in Account Settings
-- [ ] 02A-06-PLAN.md — End-to-end wiring (enrichment endpoint), Stripe webhook events, PostHog dashboard config
+- [ ] 02A-05-PLAN.md — PostHog lifecycle events, usage API, UsageMeter + UsageIndicator UI in Account Settings
+- [ ] 02A-06-PLAN.md — End-to-end wiring (enrichment endpoint), SESS-05 paywall flagging, Stripe webhook events, PostHog dashboard config
 
 ### Phase 2B: BRRRR Calculator & Deal Score
 **Goal**: A free-tier user can run a complete BRRRR analysis and all supporting financial calculations using manually entered property data, see a Deal Score summarizing deal quality, and adjust inputs with real-time recalculation — giving validation investors something real to evaluate deals before any paid data integration exists.

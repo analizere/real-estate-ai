@@ -9,11 +9,12 @@ files_modified:
   - app/api/v1/usage/route.ts
   - app/api/v1/webhooks/stripe/route.ts
   - components/ui/usage-meter.tsx
+  - components/ui/usage-indicator.tsx
   - hooks/use-usage.ts
   - app/account/settings/page.tsx
   - app/query-provider.tsx
 autonomous: true
-requirements: [ANLYT-04, ANLYT-08, ANLYT-09, ANLYT-11, SESS-07, METER-02, METER-05, METER-08, METER-09]
+requirements: [ANLYT-04, ANLYT-08, ANLYT-11, SESS-07, METER-02, METER-05, METER-08, METER-09]
 user_setup:
   - service: posthog
     why: "Product analytics, session recording, feature flags"
@@ -32,6 +33,7 @@ must_haves:
     - "PostHog person properties are updated server-side on subscription changes"
     - "Usage API endpoint returns per-action-type summary with used/limit/percentage"
     - "UsageMeter component renders in Account Settings with progress bars per action type"
+    - "UsageIndicator skeleton component exists for inline 80% warning on features (D-18/D-21)"
     - "React Query fetches usage data (no raw fetch in components per CLAUDE.md)"
   artifacts:
     - path: "lib/services/posthog-events.ts"
@@ -43,6 +45,9 @@ must_haves:
     - path: "components/ui/usage-meter.tsx"
       provides: "UsageMeter component with progress bars, warning, exhausted states"
       exports: ["UsageMeter"]
+    - path: "components/ui/usage-indicator.tsx"
+      provides: "UsageIndicator inline component skeleton for contextual 80% warnings (D-18/D-21)"
+      exports: ["UsageIndicator"]
     - path: "hooks/use-usage.ts"
       provides: "React Query hook for usage data"
       exports: ["useUsage"]
@@ -62,13 +67,17 @@ must_haves:
       to: "components/ui/usage-meter.tsx"
       via: "UsageMeter component import"
       pattern: "import.*UsageMeter.*from.*usage-meter"
+    - from: "components/ui/usage-indicator.tsx"
+      to: "hooks/use-usage.ts"
+      via: "useUsage hook for data fetching"
+      pattern: "import.*useUsage.*from.*use-usage"
 ---
 
 <objective>
-Wire PostHog lifecycle events, create the usage API endpoint, build the UsageMeter UI component, and integrate it into Account Settings. This plan connects the services from Plans 02-03 to the user-facing layer.
+Wire PostHog lifecycle events, create the usage API endpoint, build the UsageMeter UI component, create the UsageIndicator inline skeleton for contextual 80% warnings, and integrate into Account Settings. This plan connects the services from Plans 02-03 to the user-facing layer.
 
-Purpose: Users can see their usage in Account Settings. PostHog captures lifecycle events for analytics. React Query provides the data fetching layer per CLAUDE.md mandate.
-Output: Event capture helpers, usage API route, UsageMeter component, Account Settings integration.
+Purpose: Users can see their usage in Account Settings. PostHog captures lifecycle events for analytics. React Query provides the data fetching layer per CLAUDE.md mandate. UsageIndicator skeleton is ready for Phase 2B consumers to embed inline on features (D-18/D-21).
+Output: Event capture helpers, usage API route, UsageMeter component, UsageIndicator skeleton, Account Settings integration.
 </objective>
 
 <execution_context>
@@ -292,8 +301,8 @@ export async function GET() {
 </task>
 
 <task type="auto">
-  <name>Task 2: Build UsageMeter component and integrate into Account Settings</name>
-  <files>components/ui/usage-meter.tsx, hooks/use-usage.ts, app/account/settings/page.tsx</files>
+  <name>Task 2: Build UsageMeter, UsageIndicator skeleton, and integrate into Account Settings</name>
+  <files>components/ui/usage-meter.tsx, components/ui/usage-indicator.tsx, hooks/use-usage.ts, app/account/settings/page.tsx</files>
   <read_first>
     - .planning/phases/02A-infrastructure-services/02A-UI-SPEC.md (full component spec, copywriting contract, interaction contract, color/spacing rules)
     - app/account/settings/page.tsx (current Account Settings page — UsageMeter goes below SubscriptionStatusCard)
@@ -303,6 +312,7 @@ export async function GET() {
     - components/ui/separator.tsx (Separator — divides rows)
     - components/ui/skeleton.tsx (Skeleton — loading state)
     - app/api/v1/usage/route.ts (just created — response shape for hook)
+    - .planning/phases/02A-infrastructure-services/02A-CONTEXT.md (D-18, D-19, D-20, D-21: metering UX decisions)
   </read_first>
   <action>
 1. Create `hooks/use-usage.ts` — React Query hook per CLAUDE.md mandate (no raw fetch):
@@ -394,7 +404,69 @@ export function UsageMeterCard() {
 }
 ```
 
-3. Update `app/account/settings/page.tsx`:
+3. Create `components/ui/usage-indicator.tsx` — inline contextual usage indicator skeleton per D-18/D-21:
+
+```typescript
+'use client'
+import { useUsage } from '@/hooks/use-usage'
+
+/**
+ * UsageIndicator — inline contextual usage indicator for specific features.
+ * Per D-18: 80% warning surfaces BOTH inline on the relevant feature AND in Account Settings.
+ * Per D-21: Contextual inline indicators on specific features (address search bar, skip trace, etc.)
+ *
+ * This is the SKELETON component. Phase 2B consumers embed this next to their features:
+ *   <UsageIndicator actionType="stage2_lookup" />  — next to address search bar
+ *   <UsageIndicator actionType="skip_trace" />     — next to skip trace button
+ *
+ * Props:
+ *   actionType: string — the action type key to display usage for
+ *   compact?: boolean — if true, show only "{used}/{limit}" without label (default: false)
+ *
+ * Behavior:
+ *   - Hidden when usage < 80% (no visual noise)
+ *   - Shows yellow warning badge at 80-99%: "8/10 used"
+ *   - Shows red exhausted badge at 100%: "Limit reached"
+ *   - Shows nothing during beta (all unlimited)
+ */
+export function UsageIndicator({
+  actionType,
+  compact = false,
+}: {
+  actionType: string
+  compact?: boolean
+}) {
+  const { data } = useUsage()
+  if (!data) return null
+
+  const item = data.usage.find(u => u.actionType === actionType)
+  if (!item) return null
+
+  // During beta (all unlimited), show nothing
+  if (item.limit === 'unlimited') return null
+
+  // Below 80%, show nothing (no visual noise)
+  if (!item.isWarning && !item.isExhausted) return null
+
+  // 80-99%: yellow warning
+  if (item.isWarning && !item.isExhausted) {
+    return (
+      <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-yellow-100 text-yellow-800 dark:bg-yellow-900/30 dark:text-yellow-400 ${compact ? '' : 'ml-2'}`}>
+        {compact ? `${item.used}/${item.limit}` : `${item.used}/${item.limit} used`}
+      </span>
+    )
+  }
+
+  // 100%: red exhausted
+  return (
+    <span className={`inline-flex items-center rounded-full px-2 py-0.5 text-xs font-medium bg-red-100 text-red-800 dark:bg-red-900/30 dark:text-red-400 ${compact ? '' : 'ml-2'}`}>
+      {compact ? 'Limit reached' : 'Limit reached — upgrade for more'}
+    </span>
+  )
+}
+```
+
+4. Update `app/account/settings/page.tsx`:
    - Import `UsageMeterCard` from `@/components/ui/usage-meter`
    - Add `<UsageMeterCard />` BELOW the `<SubscriptionStatusCard />` and ABOVE the `<Separator />` before Profile section
    - The placement per UI-SPEC: "Renders in Account Settings page below the SubscriptionStatusCard, above the Profile section"
@@ -417,13 +489,17 @@ export function UsageMeterCard() {
     - components/ui/usage-meter.tsx contains `h-2` (8px progress bar height per UI-SPEC)
     - components/ui/usage-meter.tsx contains `text-yellow-600` (warning color per UI-SPEC)
     - components/ui/usage-meter.tsx contains `text-destructive` (exhausted color per UI-SPEC)
+    - components/ui/usage-indicator.tsx contains `export function UsageIndicator`
+    - components/ui/usage-indicator.tsx contains `isWarning`
+    - components/ui/usage-indicator.tsx contains `isExhausted`
+    - components/ui/usage-indicator.tsx contains `"Limit reached"`
     - hooks/use-usage.ts contains `useQuery`
     - hooks/use-usage.ts contains `/api/v1/usage`
     - app/account/settings/page.tsx contains `UsageMeterCard`
     - app/account/settings/page.tsx contains `import.*UsageMeterCard.*from.*usage-meter`
     - `npx next build` completes without error
   </acceptance_criteria>
-  <done>UsageMeter component renders in Account Settings with progress bars per action type. React Query hook fetches from usage API. All UI-SPEC copy strings match exactly. Build succeeds.</done>
+  <done>UsageMeter component renders in Account Settings with progress bars per action type. UsageIndicator skeleton exists for Phase 2B inline contextual warnings (D-18/D-21). React Query hook fetches from usage API. All UI-SPEC copy strings match exactly. Build succeeds.</done>
 </task>
 
 </tasks>
@@ -434,6 +510,7 @@ export function UsageMeterCard() {
 - `grep "Usage This Month" components/ui/usage-meter.tsx` — exact copy from UI-SPEC
 - `grep "useQuery" hooks/use-usage.ts` — React Query used (not raw fetch)
 - `grep "UsageMeterCard" app/account/settings/page.tsx` — integrated in settings
+- `grep "UsageIndicator" components/ui/usage-indicator.tsx` — inline indicator skeleton exists
 </verification>
 
 <success_criteria>
@@ -442,6 +519,7 @@ export function UsageMeterCard() {
 - Usage API returns per-action summary with daysUntilReset
 - React Query provider wraps app (CLAUDE.md mandate)
 - UsageMeter renders in Account Settings with exact UI-SPEC copy
+- UsageIndicator skeleton component exists for Phase 2B consumers to embed inline on features (D-18/D-21)
 - Progress bar colors: accent (0-79%), yellow-600 (80-99%), destructive (100%)
 - Loading (Skeleton), error, empty, beta states all handled
 - Build succeeds

@@ -9,6 +9,7 @@ files_modified:
   - app/posthog-pageview.tsx
   - app/layout.tsx
   - lib/services/posthog-server.ts
+  - tests/unit/posthog-config.test.ts
 autonomous: true
 requirements: [ANLYT-01, ANLYT-02, ANLYT-03, ANLYT-10, ANLYT-11, SESS-01, SESS-02, SESS-03, SESS-04, SESS-05, SESS-06]
 
@@ -95,7 +96,7 @@ export default function RootLayout({ children }) {
 
 <task type="auto">
   <name>Task 1: Install PostHog dependencies and create provider + pageview components</name>
-  <files>app/providers.tsx, app/posthog-pageview.tsx, lib/services/posthog-server.ts</files>
+  <files>app/providers.tsx, app/posthog-pageview.tsx, lib/services/posthog-server.ts, tests/unit/posthog-config.test.ts</files>
   <read_first>
     - app/layout.tsx (current layout structure to understand wrapping order)
     - .planning/phases/02A-infrastructure-services/02A-RESEARCH.md (Pattern 3: PostHog Provider, Pattern 4: Server-Side PostHog, Pitfall 1 and 2)
@@ -223,9 +224,70 @@ export default function RootLayout({ children }) {
      await client.shutdown()
    }
    ```
+
+5. Create `tests/unit/posthog-config.test.ts` — behavioral verification that PostHog config flags are correct:
+   ```typescript
+   // Tests that verify PostHog provider config by reading the source file
+   // and asserting key configuration values are present.
+   // This catches regressions where someone removes critical config flags.
+   import { describe, test, expect } from 'vitest'
+   import fs from 'fs'
+   import path from 'path'
+
+   describe('PostHog Provider Config', () => {
+     const providerSource = fs.readFileSync(
+       path.resolve('app/providers.tsx'), 'utf-8'
+     )
+
+     test('disables automatic pageview capture (manual tracking via PostHogPageView)', () => {
+       expect(providerSource).toContain('capture_pageview: false')
+     })
+
+     test('enables session recording for beta (D-32)', () => {
+       expect(providerSource).toContain('disable_session_recording: false')
+     })
+
+     test('masks password inputs (D-34/ANLYT-03)', () => {
+       expect(providerSource).toContain('password: true')
+     })
+
+     test('enables autocapture for rage click detection (SESS-04)', () => {
+       expect(providerSource).toContain('autocapture: true')
+     })
+
+     test('uses identified_only person profiles (no anonymous tracking)', () => {
+       expect(providerSource).toContain("person_profiles: 'identified_only'")
+     })
+   })
+
+   describe('PostHogPageView Component', () => {
+     const pageviewSource = fs.readFileSync(
+       path.resolve('app/posthog-pageview.tsx'), 'utf-8'
+     )
+
+     test('wraps useSearchParams in Suspense boundary (Pitfall 1)', () => {
+       expect(pageviewSource).toContain('<Suspense')
+       expect(pageviewSource).toContain('useSearchParams')
+     })
+   })
+
+   describe('PostHog Server Client', () => {
+     const serverSource = fs.readFileSync(
+       path.resolve('lib/services/posthog-server.ts'), 'utf-8'
+     )
+
+     test('uses flushAt: 1 for serverless safety', () => {
+       expect(serverSource).toContain('flushAt: 1')
+     })
+
+     test('calls shutdown for immediate flush', () => {
+       expect(serverSource).toContain('await client.shutdown()')
+     })
+   })
+   ```
   </action>
   <verify>
-    <automated>cd /Users/sticky_iqqy_iqqy/real-estate-ai && npx tsc --noEmit app/providers.tsx app/posthog-pageview.tsx lib/services/posthog-server.ts 2>&1 | head -20; echo "---"; node -e "require('posthog-js'); require('posthog-node'); console.log('PostHog deps OK')"</automated>
+    <automated>cd /Users/sticky_iqqy_iqqy/real-estate-ai && npx tsc --noEmit app/providers.tsx app/posthog-pageview.tsx lib/services/posthog-server.ts 2>&1 | head -20; echo "---"; node -e "require('posthog-js'); require('posthog-node'); console.log('PostHog deps OK')"; echo "---"; npx vitest run tests/unit/posthog-config.test.ts --reporter=verbose</automated>
   </verify>
   <acceptance_criteria>
     - app/providers.tsx contains `'use client'`
@@ -246,8 +308,9 @@ export default function RootLayout({ children }) {
     - package.json contains `posthog-js`
     - package.json contains `posthog-node`
     - package.json contains `@tanstack/react-query`
+    - tests/unit/posthog-config.test.ts exits 0
   </acceptance_criteria>
-  <done>PostHog client/server libraries installed. PHProvider, PostHogPageView, and posthog-server singleton all created and type-check clean.</done>
+  <done>PostHog client/server libraries installed. PHProvider, PostHogPageView, and posthog-server singleton all created and type-check clean. Behavioral config tests pass.</done>
 </task>
 
 <task type="auto">
@@ -308,6 +371,7 @@ Key points:
 
 <verification>
 - `npx next build` — builds without errors (PostHog integrated, Suspense boundary correct)
+- `npx vitest run tests/unit/posthog-config.test.ts --reporter=verbose` — config flag tests pass
 - `grep -n "PHProvider" app/layout.tsx` — PHProvider wraps children
 - `grep -n "Suspense" app/posthog-pageview.tsx` — Suspense boundary present
 - `grep -n "flushAt: 1" lib/services/posthog-server.ts` — serverless-safe config
@@ -322,6 +386,7 @@ Key points:
 - Session recording enabled (disable_session_recording: false)
 - Password inputs masked (maskInputOptions.password: true)
 - Build succeeds with no hydration or Suspense errors
+- Behavioral config tests verify critical PostHog flags
 </success_criteria>
 
 <output>
