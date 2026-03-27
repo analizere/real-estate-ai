@@ -55,7 +55,15 @@ Plans:
   4. PostHog cohorts (retention, feature adoption, acquisition source, market, deal score) are configured and receiving data
   5. DataEnrichmentService exists with `stage1Enrich()` and `stage2Enrich()` method signatures, cache TTL definitions, and `cache_source` tracking — even if Stage 1 adapters are stubs
   6. Soft limits are enforced: 80% warning, 100% block with upgrade prompt, beta override sets all to unlimited
-**Plans**: TBD
+**Plans**: 6 plans
+
+Plans:
+- [ ] 02A-01-PLAN.md — Feature tier config, schemas (feature_overrides + expanded usage_log)
+- [ ] 02A-02-PLAN.md — PostHog provider, pageview tracker, server-side client, layout integration
+- [ ] 02A-03-PLAN.md — Hybrid 3-tier GatingService + full METER-01 usage metering
+- [ ] 02A-04-PLAN.md — DataEnrichmentService interface contract + stub implementations
+- [ ] 02A-05-PLAN.md — PostHog lifecycle events, usage API, UsageMeter UI in Account Settings
+- [ ] 02A-06-PLAN.md — End-to-end wiring (enrichment endpoint), Stripe webhook events, PostHog dashboard config
 
 ### Phase 2B: BRRRR Calculator & Deal Score
 **Goal**: A free-tier user can run a complete BRRRR analysis and all supporting financial calculations using manually entered property data, see a Deal Score summarizing deal quality, and adjust inputs with real-time recalculation — giving validation investors something real to evaluate deals before any paid data integration exists.
@@ -65,7 +73,7 @@ Plans:
   1. Free-tier user can enter property details manually (address, beds, baths, sqft, lot size, purchase price, zoning) and run a BRRRR analysis without any paywall
   2. User can see monthly cash flow, annual cash-on-cash return, cap rate, DSCR, and GRM calculated from their inputs in real time
   3. User can override any individual input field with a custom value at any time without losing other calculated results
-  4. Every analyzed property displays a Deal Score (0–100) with color-coded band (Poor/Fair/Good/Strong) as the most visually prominent element
+  4. Every analyzed property displays a Deal Score (0-100) with color-coded band (Poor/Fair/Good/Strong) as the most visually prominent element
   5. Deal Score recomputes in real time when any input changes, with component breakdown visible on Pro tier
   6. Analysis flow events fire to PostHog (analysis_started, analysis_completed, deal_score_computed)
 **Plans**: TBD
@@ -94,7 +102,7 @@ Plans:
   2. User can set target markets, investment strategy, minimum cash flow threshold, and financial assumption defaults (down payment %, interest rate, rehab cost per sqft) from account settings
   3. Financial assumption defaults pre-populate the matching input fields when a user starts a new analysis
   4. User can skip onboarding at any point and re-access it from account settings
-  5. Field-level caching is operational: TTLs by field type (static 180d, semi-static 30d, dynamic 24–48h), lazy invalidation, cascade invalidation via dependency map, request deduplication, stale-while-revalidate UI
+  5. Field-level caching is operational: TTLs by field type (static 180d, semi-static 30d, dynamic 24-48h), lazy invalidation, cascade invalidation via dependency map, request deduplication, stale-while-revalidate UI
   6. Admin dashboard shows daily/weekly/monthly metrics including per-user API cost, usage volume, churn signals, and cache hit rates
   7. Churn monitoring triggers are configured (14-day inactive, paywall friction, data quality frustration, etc.)
 **Plans**: TBD
@@ -141,13 +149,13 @@ Plans:
 ## Progress
 
 **Execution Order:**
-Phases execute in order: 1 → 2A → 2B → 2C → 3 → 4 → 5 → 6
+Phases execute in order: 1 -> 2A -> 2B -> 2C -> 3 -> 4 -> 5 -> 6
 (Phase 4 depends on 2B, not 2C/3 — can potentially parallelize with 2C/3 if resources allow)
 
 | Phase | Plans Complete | Status | Completed |
 |-------|----------------|--------|-----------|
 | 1. Foundation | 5/5 | Complete |  |
-| 2A. Infrastructure Services | 0/TBD | Not started | - |
+| 2A. Infrastructure Services | 0/6 | Planned | - |
 | 2B. BRRRR Calculator & Deal Score | 0/TBD | Not started | - |
 | 2C. Portfolio Management | 0/TBD | Not started | - |
 | 3. Investor Profile, Onboarding & Caching | 0/TBD | Not started | - |
