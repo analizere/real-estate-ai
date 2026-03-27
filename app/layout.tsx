@@ -15,7 +15,7 @@ const geistMono = Geist_Mono({
 });
 
 export const metadata: Metadata = {
-  title: "Real Estate AI",
+  title: "REvested",
   description: "Real estate investment analysis platform",
 };
 

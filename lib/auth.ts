@@ -21,7 +21,7 @@ export const auth = betterAuth({
       resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL!,
         to: user.email,
-        subject: "Verify your email — Real Estate AI",
+        subject: "Verify your email — REvested",
         html: `<p>Click <a href="${url}">here</a> to verify your email address.</p>`,
       });
     },
@@ -29,7 +29,7 @@ export const auth = betterAuth({
       resend.emails.send({
         from: process.env.RESEND_FROM_EMAIL!,
         to: user.email,
-        subject: "Reset your password — Real Estate AI",
+        subject: "Reset your password — REvested",
         html: `<p>Click <a href="${url}">here</a> to reset your password. This link expires in 1 hour.</p>`,
       });
     },

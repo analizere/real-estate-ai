@@ -29,7 +29,7 @@ export default function HomePage() {
       <TopNav
         logo={
           <Link href="/" className="text-xl font-bold tracking-tight text-[#006aff]">
-            Real Estate AI
+            REvested
           </Link>
         }
         items={[{ label: "Home", href: "/", active: true }]}

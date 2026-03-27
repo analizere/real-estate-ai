@@ -3,7 +3,7 @@
 <!-- GSD:project-start source:PROJECT.md -->
 ## Project
 
-**Real Estate Investment Analysis Platform (TBD name)**
+**REvested — Real Estate Investment Analysis Platform**
 
 A SaaS platform for real estate investors and wholesalers that eliminates the research legwork behind deal analysis. Enter any address and the platform automatically pulls public records, GIS, and zoning data, then runs BRRRR and DADU/ADU feasibility analysis with rent estimates — delivering a complete investment picture in under 60 seconds. Piloting in Pacific NW markets (OR/WA) where DADU/ADU activity is high and public data is accessible.
 
@@ -12,7 +12,8 @@ A SaaS platform for real estate investors and wholesalers that eliminates the re
 ### Constraints
 
 - **API-first**: REST API must support web, mobile, and browser plugin from day one — do not build web-only shortcuts that break future clients
-- **Variable data costs**: Live API calls (county records, Rentcast) must be metered per paid user — no unbounded free lookups
+- **Two-tier pricing**: Free tier = BRRRR calculator only (acquisition funnel, no saving); Pro tier = $99/mo ($79/mo annual) with 50 lookups/month, $1.50 overage — free tier has zero API access
+- **Variable data costs**: Live API calls (county records, Rentcast) metered per Pro user — 50 lookups/month included, $1.50 overage; skip trace credits TBD pending API cost evaluation
 - **DADU data maintainability**: Zoning rules DB must be easy to update per market as rules change — do not hardcode zoning logic into app code
 - **Market scoping**: Launch with 4 Pacific NW county-level markets (King, Snohomish, Pierce, Multnomah); data pipeline architecture must support adding new markets without code changes
 - **Founder bandwidth**: Part-time build — phases should deliver working, testable features early so peer feedback can happen at each step
@@ -57,9 +58,8 @@ A SaaS platform for real estate investors and wholesalers that eliminates the re
 - eslint@9 - Linting
 - eslint-config-next@16.2.1 - Next.js ESLint configuration
 ## Configuration
-- No external environment variables required
-- Mock data only (`lib/mock-properties.ts`)
-- No API calls or external services
+- `NEXT_PUBLIC_POSTHOG_KEY` — PostHog project API key
+- `NEXT_PUBLIC_POSTHOG_HOST` — PostHog instance host URL
 - `tsconfig.json` - TypeScript compiler options
 - `next.config.ts` - Next.js configuration (minimal/empty)
 - `eslint.config.mjs` - ESLint rules (Next.js core web vitals + TypeScript)
@@ -209,6 +209,62 @@ A SaaS platform for real estate investors and wholesalers that eliminates the re
   - API layer (`app/api/`): server-side route handlers, auth guards, metering
   - UI components (`components/ui/`, `app/`): rendering and user interaction only — no fetch calls, no business rules, no direct data manipulation
 - **Component library (enforced every phase)**: All UI is built from the shared component library in `/components/ui/`. No one-off hardcoded styles anywhere in the codebase. Every feature in every phase consumes from this library.
+- **GIS/mapping data architecture (enforced from day one)**: The data schema and architecture must support the full post-MVP GIS layer without migration. Specifically:
+  - Property records must include fields for utility expansion timeline data from day one: `plannedExpansionZone`, `projectedTimeline`, `fundingStatus`, `sourceDocument`, `confidenceLevel` — not just current utility status
+  - Building footprint and parcel geometry must be stored and versioned so changes over time can be tracked
+  - Frontage calculations (street and alley) must be computed from parcel geometry and stored as derived fields on the property record
+  - The map component (when built) must use a pluggable layer system — new GIS overlays added without rearchitecting the component
+  - All GIS data must feed into the DADU feasibility scoring engine, not just display on a map
+  - Do not model property data as a flat record of current state — the schema must support temporal and spatial dimensions from phase 1
+- **Analytics (PostHog — enforced from Phase 2)**: PostHog is the product analytics, session recording, cohort analysis, and feature flagging layer. All user-facing features must emit events following the event taxonomy defined in REQUIREMENTS.md (ANLYT-01 through ANLYT-11, ADMIN-01 through ADMIN-04, COHRT-01 through COHRT-05, CHURN-01 through CHURN-07, SESS-01 through SESS-07). Implementation rules:
+  - PostHog provider wraps the entire app layout — do not initialize per-page; implement in Phase 2 before any feature UI
+  - No PII in event properties — identify users by user ID not email, property_id not address, never log raw addresses
+  - Use `posthog.capture()` for events, `posthog.identify()` for user identification
+  - Session recording: all sessions for first 90 days of beta; after 90 days, all free tier sessions + first 5 sessions of every new paid user; flag rage clicks and paywall-without-upgrade sessions for priority review
+  - Every new feature must include analytics events in its implementation — not as a follow-up task
+  - Data pull events (`stage1_data_pull_started`, `stage2_data_pull_started`, etc.) fire server-side to prevent ad blocker suppression of cost-critical events; all user interaction events fire client-side
+  - PostHog person properties must be updated server-side on plan changes to ensure accuracy
+  - Mirror all metered actions from `usage_log` to PostHog — dual logging for cost visibility and product analytics
+  - Use PostHog feature flags for A/B testing paywall placement and upgrade prompt copy
+  - PostHog heatmaps configured on: Property Intelligence page, Portfolio page, pricing/upgrade modal
+  - Cohort analysis configured from day one: retention cohorts (week 1, month 1), feature adoption cohorts, acquisition source cohorts, market cohorts, deal score cohorts
+- **Property data caching (enforced from Phase 2)**: Field-level lazy invalidation architecture. Implementation rules:
+  - Every property field has a cache TTL: static (180 days), semi-static (30 days), dynamic (24–48 hours), never-cache (skip trace)
+  - Lazy invalidation only — stale fields are never refreshed proactively; only when a user accesses a view requiring those fields
+  - Views declare which fields they need — list views never trigger refreshes for fields only needed on detail views
+  - Cascade invalidation via dependency map — source field refresh invalidates computed fields that depend on it
+  - Request deduplication — never fire duplicate API calls for the same field on the same property
+  - `has_stale_fields` boolean on property records — page load checks this only, not per-field
+- **Performance and code quality (enforced every phase)**:
+  - **N+1 query prevention**: Zero N+1 queries anywhere in the codebase. All list views use batch or JOIN queries — never per-row queries in a loop. Any loop containing a database query is a bug.
+  - **React Query (TanStack Query)**: Use for all client-side data fetching without exception. No raw `fetch()` calls in React components. Enables stale-while-revalidate, background refetching, request deduplication, and optimistic updates.
+  - **Optimistic UI**: All user-initiated mutations (tag, list add/remove, save) must update UI instantly. Database writes happen in background. On failure: roll back UI change and show error toast.
+  - **Background jobs**: Use Inngest or Trigger.dev for all async operations (export generation, zone invalidation sweeps, skip trace calls, email sending). No long-running synchronous operations in API route handlers. API routes must respond in under 500ms — offload anything slower.
+  - **Edge caching**: Publicly shareable deal report pages cached at Vercel edge. Cache TTL: 5 minutes. Invalidate on analysis update.
+  - **Soft deletes everywhere**: All user-created content (lists, tags, saved analyses, properties) use soft deletes (`deleted_at` timestamp). Never permanently delete user data without explicit multi-step confirmation.
+- **Staged data pull architecture (enforced from Phase 2)**: Property data enrichment follows a two-stage architecture controlling API costs and building a proprietary cached database. Implementation rules:
+  - Stage 1 (free tier): county assessor APIs, county GIS APIs, OpenStreetMap, Census TIGER files — all cached in ReVested's property database on first lookup; subsequent lookups served from cache with zero repeat API calls
+  - Stage 2 (paid tier only, on demand): Rentcast API (rent estimates), skip trace API (never cached), ATTOM (comparable sales), ReVested DADU zoning rules database (internal — no external API cost)
+  - Implement as `DataEnrichmentService` with `stage1Enrich(address)` and `stage2Enrich(propertyId, features[])` as distinct methods — the free/paid boundary must be explicit in the codebase
+  - Track `cache_source` per field: county_api | gis_api | openstreetmap | rentcast | attom | internal
+  - Graceful degradation required: show available data clearly, flag missing fields explicitly rather than failing silently
+  - Cache hit rate tracked as a key infrastructure metric — the compounding property database is a competitive data asset
+- **Data tier architecture (enforced from Phase 2)**: Three access tiers controlled by a central gating service. Implementation rules:
+  - Tier 1 (always free): Stage 1 public data, manual calculator, Deal Score from manual data only
+  - Tier 2 (preview free): show data clearly and completely — never blur, hide, or obscure; gate the action (include in analysis, save, export), not the visibility; "see everything, do more with Pro"
+  - Tier 3 (Pro only): full enrichment, full analysis, full export capabilities
+  - Feature gating controlled by a single configuration layer — never scatter `if user.plan === 'free'` checks in individual components
+  - A single config file or database table defines feature-to-tier assignments; all components call the central gating service
+  - Supports tier changes, A/B testing, and new tiers without rearchitecting; limits configurable per tier without code deployments
+  - Anti-pattern: hardcoded plan checks in UI components — always use the central gating service
+- **Usage metering (enforced from Phase 2)**: Every action with a cost implication must be logged before it executes. Implementation rules:
+  - Log: user_id, timestamp, action_type, cost_estimate_cents, api_provider, property_id (nullable), metadata JSON, plan_at_time_of_action
+  - Soft limits: every metered action checks configurable limit before executing; limits defined in central config per plan tier (same config as gating service)
+  - At 80% of any limit: show usage indicator in account settings; at 100%: show clear message with upgrade/overage option — never silently fail
+  - Limits can be set to "unlimited" — the check still runs, it just never blocks
+  - Beta strategy (first 90 days): set all limits to unlimited, log everything, enforce nothing; analyze actual usage data to set informed limits before public launch
+  - Admin dashboard: users sorted by estimated API cost and action volume; email alert when any user's monthly cost exceeds $25
+- **Zoning data research (Phase 4 instruction)**: When Phase 4 (DADU Feasibility Engine) begins, before writing any code, use web research to compile complete ADU/DADU zoning rules for all 4 pilot markets from official public zoning codes and municipal websites. For each county compile: minimum lot size, maximum ADU size, setback requirements (front/rear/side), lot coverage limits, owner-occupancy requirements, ADU types permitted (attached/detached/garage conversion/basement), height limits, parking requirements, and any special conditions or overlay zones. Structure output as JSON ready for database import. Counties: King County WA (including Seattle, Bellevue, Redmond, Renton), Snohomish County WA (including Everett), Pierce County WA (including Tacoma), Multnomah County OR (including Portland). AI compiles from public sources, human verifies accuracy before import.
 <!-- GSD:architecture-end -->
 
 <!-- GSD:workflow-start source:GSD defaults -->
