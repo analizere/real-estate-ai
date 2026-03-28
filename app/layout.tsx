@@ -4,6 +4,7 @@ import { ThemeProvider } from "next-themes";
 import { Toaster } from "@/components/ui/sonner";
 import { PHProvider } from "./providers";
 import { PostHogPageView } from "./posthog-pageview";
+import { QueryProvider } from "./query-provider";
 import "./globals.css";
 
 const geistSans = Geist({
@@ -34,11 +35,13 @@ export default function RootLayout({
     >
       <body className="min-h-full flex flex-col">
         <PHProvider>
-          <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
-            <PostHogPageView />
-            {children}
-            <Toaster />
-          </ThemeProvider>
+          <QueryProvider>
+            <ThemeProvider attribute="class" defaultTheme="system" enableSystem>
+              <PostHogPageView />
+              {children}
+              <Toaster />
+            </ThemeProvider>
+          </QueryProvider>
         </PHProvider>
       </body>
     </html>
