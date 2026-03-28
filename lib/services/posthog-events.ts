@@ -74,3 +74,32 @@ export async function trackSubscriptionCancelled(userId: string): Promise<void> 
     subscription_cancelled_at: new Date().toISOString(),
   })
 }
+
+/**
+ * PostHog Feature Flags (D-27/ANLYT-11):
+ * Feature flags are configured in the PostHog dashboard, NOT in code.
+ * Flags to create manually in the PostHog UI (Feature Flags section):
+ *
+ *   - paywall_placement: A/B test where upgrade prompts appear
+ *     Type: Multivariate, 50/50 split
+ *     Purpose: Optimize upgrade prompt placement for free-to-paid conversion
+ *
+ *   - upgrade_prompt_copy: A/B test upgrade prompt wording
+ *     Type: Multivariate, 50/50 split
+ *     Purpose: Optimize upgrade CTA copy for higher click-through rate
+ *
+ * Client-side evaluation (inside PHProvider/usePostHog components):
+ *   import { useFeatureFlagEnabled } from 'posthog-js/react'
+ *   const showVariantA = useFeatureFlagEnabled('paywall_placement')
+ *
+ * Server-side evaluation (in Route Handlers or Server Components):
+ *   const client = getPostHogServerClient()
+ *   const enabled = await client.isFeatureEnabled('paywall_placement', userId)
+ *
+ * Per D-27: all A/B test result analysis is done in PostHog, not in code.
+ * Do not implement feature flag logic in components without consulting
+ * the central feature tier config in lib/config/feature-tiers.ts first.
+ *
+ * See also: PostHog Cohorts and Funnels configuration checklist in
+ * .planning/phases/02A-infrastructure-services/02A-06-PLAN.md Task 3.
+ */

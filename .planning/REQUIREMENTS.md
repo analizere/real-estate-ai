@@ -102,11 +102,11 @@
 
 ### Cohort Analysis
 
-- [ ] **COHRT-01**: PostHog cohorts configured from day one: week 1 retention (returned within 7 days of signup), month 1 retention (returned at least once in first month)
-- [ ] **COHRT-02**: Feature adoption cohorts: users who ran DADU in week 1 vs. week 4 — which group retains better?
-- [ ] **COHRT-03**: Acquisition source cohorts: founder network vs. organic vs. paid — which converts to paid and retains best?
-- [ ] **COHRT-04**: Market cohorts: King County users vs. other markets — engagement and conversion differences
-- [ ] **COHRT-05**: Deal score cohorts: users whose saved deals average above 66 vs. below 40 — does deal quality affect retention?
+- [x] **COHRT-01**: PostHog cohorts configured from day one: week 1 retention (returned within 7 days of signup), month 1 retention (returned at least once in first month)
+- [x] **COHRT-02**: Feature adoption cohorts: users who ran DADU in week 1 vs. week 4 — which group retains better?
+- [x] **COHRT-03**: Acquisition source cohorts: founder network vs. organic vs. paid — which converts to paid and retains best?
+- [x] **COHRT-04**: Market cohorts: King County users vs. other markets — engagement and conversion differences
+- [x] **COHRT-05**: Deal score cohorts: users whose saved deals average above 66 vs. below 40 — does deal quality affect retention?
 
 ### Churn Prediction and Re-engagement
 
@@ -429,11 +429,11 @@
 | ADMIN-02 | Phase 3 | Pending |
 | ADMIN-03 | Phase 3 | Pending |
 | ADMIN-04 | Phase 3 | Pending |
-| COHRT-01 | Phase 2A | Pending |
-| COHRT-02 | Phase 2A | Pending |
-| COHRT-03 | Phase 2A | Pending |
-| COHRT-04 | Phase 2A | Pending |
-| COHRT-05 | Phase 2A | Pending |
+| COHRT-01 | Phase 2A | Complete |
+| COHRT-02 | Phase 2A | Complete |
+| COHRT-03 | Phase 2A | Complete |
+| COHRT-04 | Phase 2A | Complete |
+| COHRT-05 | Phase 2A | Complete |
 | CHURN-01 | Phase 3 | Pending |
 | CHURN-02 | Phase 3 | Pending |
 | CHURN-03 | Phase 3 | Pending |
