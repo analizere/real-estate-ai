@@ -119,6 +119,16 @@ None — all functions are fully implemented and wired to the database. No place
 - `getUserUsageSummary()` ready for the account settings usage meter UI component
 - `invalidateGatingCache()` must be called from the admin override management route when overrides are created/modified
 
+## Self-Check: PASSED
+
+- FOUND: lib/services/gating.ts
+- FOUND: lib/services/usage.ts
+- FOUND: tests/unit/gating.test.ts
+- FOUND: tests/unit/metering.test.ts
+- FOUND: 02A-03-SUMMARY.md
+- FOUND commit: a58f4d6 (Task 1 - gating)
+- FOUND commit: 826660e (Task 2 - metering)
+
 ---
 *Phase: 02A-infrastructure-services*
 *Completed: 2026-03-28*
