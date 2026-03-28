@@ -81,17 +81,17 @@
 
 ### Analytics
 
-- [ ] **ANLYT-01**: PostHog JavaScript SDK integrated into Next.js app router with `NEXT_PUBLIC_POSTHOG_KEY` and `NEXT_PUBLIC_POSTHOG_HOST` environment variables, PostHog provider wrapping entire app layout
-- [ ] **ANLYT-02**: Session recording enabled — all sessions for first 90 days of beta, then only free tier users and first 3 sessions of new paid users
-- [ ] **ANLYT-03**: Privacy-safe tracking — no PII in event properties, identify users by user ID not email
+- [x] **ANLYT-01**: PostHog JavaScript SDK integrated into Next.js app router with `NEXT_PUBLIC_POSTHOG_KEY` and `NEXT_PUBLIC_POSTHOG_HOST` environment variables, PostHog provider wrapping entire app layout
+- [x] **ANLYT-02**: Session recording enabled — all sessions for first 90 days of beta, then only free tier users and first 3 sessions of new paid users
+- [x] **ANLYT-03**: Privacy-safe tracking — no PII in event properties, identify users by user ID not email
 - [ ] **ANLYT-04**: User lifecycle events tracked: `signed_up` (method), `signed_in` (method), `signed_out`, `email_verified`, `subscription_started` (plan, price), `subscription_cancelled`, `upgrade_clicked` (source)
 - [ ] **ANLYT-05**: Analysis flow events tracked: `analysis_started` (strategy), `analysis_address_entered` (market), `analysis_data_pulled` (source, fields_populated), `analysis_completed` (strategy, market, dadu_feasible, time_to_complete_seconds), `analysis_saved`, `analysis_shared` (method), `analysis_reopened`
 - [ ] **ANLYT-06**: DADU-specific events tracked: `dadu_feasibility_checked` (county, zone, result), `dadu_income_added_to_brrrr`, `dadu_report_viewed`
 - [ ] **ANLYT-07**: Engagement events tracked: `calculator_input_changed` (calculator, field), `rent_estimate_requested` (unit, market), `upgrade_prompt_viewed` (feature), `onboarding_step_completed` (step), `onboarding_skipped`, `list_created`, `list_exported`, `list_deleted`, `tag_applied` (tag_name, property_id), `skip_trace_requested` (property_id)
 - [ ] **ANLYT-08**: Key funnels configured: signup → first analysis → upgrade; address entered → data pulled → analysis completed; upgrade clicked → subscription started; shared link viewed → recipient signup; free user → paywall hit → upgrade
 - [ ] **ANLYT-09**: Additional events tracked: `address_outside_coverage` (market — logs expansion demand), `data_inaccuracy_reported` (county, field, property_id — flag for same-day review), `data_override_applied` (county, field — data quality monitor), `stage1_data_incomplete` (county, missing_fields — coverage monitor), `deal_score_computed` (score, band, data_source — manual vs auto)
-- [ ] **ANLYT-10**: Data pull events (`stage1_data_pull_started`, `stage1_data_pull_completed`, `stage2_data_pull_started`, `stage2_data_pull_completed`) fire server-side to prevent ad blocker suppression of cost-critical events; all user interaction events fire client-side
-- [ ] **ANLYT-11**: PostHog person properties updated server-side on plan changes to ensure accuracy; use PostHog feature flags for A/B testing paywall placement and upgrade prompt copy
+- [x] **ANLYT-10**: Data pull events (`stage1_data_pull_started`, `stage1_data_pull_completed`, `stage2_data_pull_started`, `stage2_data_pull_completed`) fire server-side to prevent ad blocker suppression of cost-critical events; all user interaction events fire client-side
+- [x] **ANLYT-11**: PostHog person properties updated server-side on plan changes to ensure accuracy; use PostHog feature flags for A/B testing paywall placement and upgrade prompt copy
 
 ### Admin Dashboard (internal, founder-facing only)
 
@@ -120,12 +120,12 @@
 
 ### Session Recording
 
-- [ ] **SESS-01**: Record all sessions for first 90 days of beta — no exceptions
-- [ ] **SESS-02**: After 90 days: record all free tier sessions, first 5 sessions of every new paid user
-- [ ] **SESS-03**: Never record payment screens (Stripe Checkout is external — automatic)
-- [ ] **SESS-04**: Flag sessions containing rage clicks for priority UX review
-- [ ] **SESS-05**: Flag sessions where user hit paywall but did not upgrade — review for UX friction
-- [ ] **SESS-06**: PostHog heatmaps configured on: Property Intelligence page, Portfolio page, pricing/upgrade modal
+- [x] **SESS-01**: Record all sessions for first 90 days of beta — no exceptions
+- [x] **SESS-02**: After 90 days: record all free tier sessions, first 5 sessions of every new paid user
+- [x] **SESS-03**: Never record payment screens (Stripe Checkout is external — automatic)
+- [x] **SESS-04**: Flag sessions containing rage clicks for priority UX review
+- [x] **SESS-05**: Flag sessions where user hit paywall but did not upgrade — review for UX friction
+- [x] **SESS-06**: PostHog heatmaps configured on: Property Intelligence page, Portfolio page, pricing/upgrade modal
 - [ ] **SESS-07**: Founder reviews at least 10 recorded sessions per week during beta — non-negotiable founder activity
 
 ### Property Data Caching
@@ -351,9 +351,9 @@
 | COMP-04 | Phase 1 | Complete |
 | COMP-05 | Phase 1 | Complete |
 | COMP-06 | Phase 1 | Complete |
-| ANLYT-01 | Phase 2A | Pending |
-| ANLYT-02 | Phase 2A | Pending |
-| ANLYT-03 | Phase 2A | Pending |
+| ANLYT-01 | Phase 2A | Complete |
+| ANLYT-02 | Phase 2A | Complete |
+| ANLYT-03 | Phase 2A | Complete |
 | ANLYT-04 | Phase 2A | Pending |
 | ANLYT-05 | Phase 2B | Pending |
 | ANLYT-06 | Phase 4 | Pending |
@@ -423,8 +423,8 @@
 | METER-10 | Phase 2A | Pending |
 | METER-11 | Phase 3 | Pending |
 | ANLYT-09 | Phase 2A | Pending |
-| ANLYT-10 | Phase 2A | Pending |
-| ANLYT-11 | Phase 2A | Pending |
+| ANLYT-10 | Phase 2A | Complete |
+| ANLYT-11 | Phase 2A | Complete |
 | ADMIN-01 | Phase 3 | Pending |
 | ADMIN-02 | Phase 3 | Pending |
 | ADMIN-03 | Phase 3 | Pending |
@@ -441,12 +441,12 @@
 | CHURN-05 | Phase 3 | Pending |
 | CHURN-06 | Phase 3 | Pending |
 | CHURN-07 | Phase 3 | Pending |
-| SESS-01 | Phase 2A | Pending |
-| SESS-02 | Phase 2A | Pending |
-| SESS-03 | Phase 2A | Pending |
-| SESS-04 | Phase 2A | Pending |
-| SESS-05 | Phase 2A | Pending |
-| SESS-06 | Phase 2A | Pending |
+| SESS-01 | Phase 2A | Complete |
+| SESS-02 | Phase 2A | Complete |
+| SESS-03 | Phase 2A | Complete |
+| SESS-04 | Phase 2A | Complete |
+| SESS-05 | Phase 2A | Complete |
+| SESS-06 | Phase 2A | Complete |
 | SESS-07 | Phase 2A | Pending |
 
 **Coverage:**

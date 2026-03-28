@@ -61,7 +61,7 @@ Plans:
 
 Plans:
 - [ ] 02A-01-PLAN.md — Feature tier config, schemas (feature_overrides + expanded usage_log)
-- [ ] 02A-02-PLAN.md — PostHog provider, pageview tracker, server-side client, layout integration
+- [x] 02A-02-PLAN.md — PostHog provider, pageview tracker, server-side client, layout integration
 - [ ] 02A-03-PLAN.md — Hybrid 3-tier GatingService + full METER-01 usage metering
 - [ ] 02A-04-PLAN.md — DataEnrichmentService interface contract + stub implementations
 - [ ] 02A-05-PLAN.md — PostHog lifecycle events, usage API, UsageMeter + UsageIndicator UI in Account Settings
