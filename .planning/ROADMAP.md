@@ -64,7 +64,7 @@ Plans:
 - [x] 02A-02-PLAN.md — PostHog provider, pageview tracker, server-side client, layout integration
 - [x] 02A-03-PLAN.md — Hybrid 3-tier GatingService + full METER-01 usage metering
 - [x] 02A-04-PLAN.md — DataEnrichmentService interface contract + stub implementations
-- [ ] 02A-05-PLAN.md — PostHog lifecycle events, usage API, UsageMeter + UsageIndicator UI in Account Settings
+- [x] 02A-05-PLAN.md — PostHog lifecycle events, usage API, UsageMeter + UsageIndicator UI in Account Settings
 - [ ] 02A-06-PLAN.md — End-to-end wiring (enrichment endpoint), SESS-05 paywall flagging, Stripe webhook events, PostHog dashboard config
 
 ### Phase 2B: BRRRR Calculator & Deal Score
