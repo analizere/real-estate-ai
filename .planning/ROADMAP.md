@@ -60,7 +60,7 @@ Plans:
 **Note**: ANLYT-09 (operational events: address outside coverage, data inaccuracy reports) is deferred per D-30 — these events wire up in the phases where those features are built, not in infrastructure setup.
 
 Plans:
-- [ ] 02A-01-PLAN.md — Feature tier config, schemas (feature_overrides + expanded usage_log)
+- [x] 02A-01-PLAN.md — Feature tier config, schemas (feature_overrides + expanded usage_log)
 - [x] 02A-02-PLAN.md — PostHog provider, pageview tracker, server-side client, layout integration
 - [ ] 02A-03-PLAN.md — Hybrid 3-tier GatingService + full METER-01 usage metering
 - [ ] 02A-04-PLAN.md — DataEnrichmentService interface contract + stub implementations

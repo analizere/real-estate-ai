@@ -188,17 +188,17 @@
 
 ### Data Tier Architecture
 
-- [ ] **TIER-01**: Property data organized into three access tiers controlled by a central gating service — never scatter plan checks in individual components
-- [ ] **TIER-02**: Tier 1 (always free — Stage 1 public data): basic property attributes (beds, baths, sqft, lot size, year built, zoning name, owner name, last sale date/price, tax assessed value), parcel boundaries and basic map display, manual calculator inputs, Deal Score from manually entered data only
-- [ ] **TIER-03**: Tier 2 (preview free — demonstrates value): rent estimate shown as clear readable number, DADU feasibility pass/fail/conditional badge with one-line reason, Deal Score from auto-populated data shown clearly
+- [x] **TIER-01**: Property data organized into three access tiers controlled by a central gating service — never scatter plan checks in individual components
+- [x] **TIER-02**: Tier 1 (always free — Stage 1 public data): basic property attributes (beds, baths, sqft, lot size, year built, zoning name, owner name, last sale date/price, tax assessed value), parcel boundaries and basic map display, manual calculator inputs, Deal Score from manually entered data only
+- [x] **TIER-03**: Tier 2 (preview free — demonstrates value): rent estimate shown as clear readable number, DADU feasibility pass/fail/conditional badge with one-line reason, Deal Score from auto-populated data shown clearly
 - [ ] **TIER-04**: Tier 2 critical UI pattern: show data clearly and completely — never blur, hide, or obscure. Gate the ability to use it (include in analysis, save, export), not the visibility. "See everything, do more with Pro"
-- [ ] **TIER-05**: Tier 3 (Pro only $99/month): full rent comps with addresses/sqft/distance, full DADU feasibility checklist with all rules and sources, Deal Score breakdown with component scores, automated Stage 1 + Stage 2 data pull, ADU rent estimate, BRRRR with auto-populated data, skip trace (10/month), PDF export, shareable deal links, unlimited saves/lists, sensitivity analysis, ability to include Tier 2 preview data in analysis/saves/exports
-- [ ] **TIER-06**: Central gating service: single config file or database table defines feature-to-tier assignments; all components call this service to check access; supports tier changes, A/B testing, and new tiers without rearchitecting
-- [ ] **TIER-07**: Tier assignments are intentionally preliminary — gating architecture must support rapid iteration on what's free vs. paid without engineering effort; limits configurable per tier without code deployments
+- [x] **TIER-05**: Tier 3 (Pro only $99/month): full rent comps with addresses/sqft/distance, full DADU feasibility checklist with all rules and sources, Deal Score breakdown with component scores, automated Stage 1 + Stage 2 data pull, ADU rent estimate, BRRRR with auto-populated data, skip trace (10/month), PDF export, shareable deal links, unlimited saves/lists, sensitivity analysis, ability to include Tier 2 preview data in analysis/saves/exports
+- [x] **TIER-06**: Central gating service: single config file or database table defines feature-to-tier assignments; all components call this service to check access; supports tier changes, A/B testing, and new tiers without rearchitecting
+- [x] **TIER-07**: Tier assignments are intentionally preliminary — gating architecture must support rapid iteration on what's free vs. paid without engineering effort; limits configurable per tier without code deployments
 
 ### Usage Metering and Action Counting
 
-- [ ] **METER-01**: Every action with a cost implication is logged before it executes — not after. Tracks: user_id, timestamp, action_type, cost_estimate_cents, api_provider, property_id (nullable), metadata JSON, plan_at_time_of_action
+- [x] **METER-01**: Every action with a cost implication is logged before it executes — not after. Tracks: user_id, timestamp, action_type, cost_estimate_cents, api_provider, property_id (nullable), metadata JSON, plan_at_time_of_action
 - [ ] **METER-02**: Data pull actions metered: address_lookup_stage1, address_lookup_stage2, rent_estimate_requested (primary), rent_estimate_requested_adu, dadu_feasibility_checked (per property per session), comparable_sales_pulled
 - [ ] **METER-03**: User content actions metered: analysis_saved, analysis_exported_pdf, analysis_shared_link_created, list_created, list_exported, property_added_to_list
 - [ ] **METER-04**: Skip trace actions metered: skip_trace_requested (highest cost — always meter), skip_trace_result_found (boolean — track hit rate separately)
@@ -206,8 +206,8 @@
 - [ ] **METER-06**: Usage aggregation computed and stored daily: per-user daily/monthly action counts by type, per-user estimated daily/monthly API cost in cents, top 20% users by action volume, top 20% users by estimated API cost (different populations), flag users where estimated monthly API cost exceeds 30% of subscription revenue ($29.70 for Pro)
 - [ ] **METER-07**: Admin dashboard (founder-facing): users sorted by monthly estimated API cost and action volume, per-user action breakdown, monthly API cost vs. subscription revenue with 30% threshold highlight, email alert when any user's estimated monthly cost exceeds $25
 - [ ] **METER-08**: Soft limits: every metered action checks configurable limit before executing; limits defined in central config per plan tier (same config as gating service); at 80% show usage indicator in account settings; at 100% show clear message with upgrade/overage option — never silently fail; limits can be set to "unlimited"
-- [ ] **METER-09**: Current soft limits (preliminary): Free tier — 0 automated lookups/month, 0 skip traces/month, 3 saved analyses total, 1 PDF export/month; Pro tier — 50 automated lookups/month, 10 skip traces/month, unlimited saves/exports; Overage — $1.50 per lookup over 50/month, skip trace overage TBD
-- [ ] **METER-10**: Beta strategy (first 90 days): set all limits to "unlimited" for all users, log everything but enforce nothing; after 90 days analyze actual usage to set informed limits before public launch
+- [x] **METER-09**: Current soft limits (preliminary): Free tier — 0 automated lookups/month, 0 skip traces/month, 3 saved analyses total, 1 PDF export/month; Pro tier — 50 automated lookups/month, 10 skip traces/month, unlimited saves/exports; Overage — $1.50 per lookup over 50/month, skip trace overage TBD
+- [x] **METER-10**: Beta strategy (first 90 days): set all limits to "unlimited" for all users, log everything but enforce nothing; after 90 days analyze actual usage to set informed limits before public launch
 - [ ] **METER-11**: Power user protection: Pro users with estimated monthly API cost exceeding $29.70 flagged in admin dashboard; founder reviews monthly to inform tier adjustment; high-cost users studied, not punished
 
 ### Property Quick Actions
@@ -404,14 +404,14 @@
 | DATA-08 | Phase 2A | Pending |
 | DATA-09 | Phase 2A | Pending |
 | DATA-10 | Phase 2A | Pending |
-| TIER-01 | Phase 2A | Pending |
-| TIER-02 | Phase 2A | Pending |
-| TIER-03 | Phase 2A | Pending |
+| TIER-01 | Phase 2A | Complete |
+| TIER-02 | Phase 2A | Complete |
+| TIER-03 | Phase 2A | Complete |
 | TIER-04 | Phase 2A | Pending |
-| TIER-05 | Phase 2A | Pending |
-| TIER-06 | Phase 2A | Pending |
-| TIER-07 | Phase 2A | Pending |
-| METER-01 | Phase 2A | Pending |
+| TIER-05 | Phase 2A | Complete |
+| TIER-06 | Phase 2A | Complete |
+| TIER-07 | Phase 2A | Complete |
+| METER-01 | Phase 2A | Complete |
 | METER-02 | Phase 2A | Pending |
 | METER-03 | Phase 2C | Pending |
 | METER-04 | Phase 2A | Pending |
@@ -419,8 +419,8 @@
 | METER-06 | Phase 3 | Pending |
 | METER-07 | Phase 3 | Pending |
 | METER-08 | Phase 2A | Pending |
-| METER-09 | Phase 2A | Pending |
-| METER-10 | Phase 2A | Pending |
+| METER-09 | Phase 2A | Complete |
+| METER-10 | Phase 2A | Complete |
 | METER-11 | Phase 3 | Pending |
 | ANLYT-09 | Phase 2A | Pending |
 | ANLYT-10 | Phase 2A | Complete |
