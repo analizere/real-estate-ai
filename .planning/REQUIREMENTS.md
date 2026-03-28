@@ -175,23 +175,23 @@
 
 ### Staged Data Pull Architecture
 
-- [ ] **DATA-01**: Property data enrichment follows a two-stage architecture — Stage 1 (free data) and Stage 2 (premium data) as distinct service methods
-- [ ] **DATA-02**: Stage 1 — free data pull (available on free tier): county assessor APIs (lot size, zoning designation, beds/baths/sqft, year built, owner name, last sale date/price, tax assessed value), county GIS APIs (parcel boundaries, lot dimensions, frontage calculations, building footprint), OpenStreetMap (supplemental building data), Census TIGER files (parcel geometry)
-- [ ] **DATA-03**: All Stage 1 data cached in ReVested's property database on first lookup; subsequent lookups for same address served from cache with zero repeat API calls
+- [x] **DATA-01**: Property data enrichment follows a two-stage architecture — Stage 1 (free data) and Stage 2 (premium data) as distinct service methods
+- [x] **DATA-02**: Stage 1 — free data pull (available on free tier): county assessor APIs (lot size, zoning designation, beds/baths/sqft, year built, owner name, last sale date/price, tax assessed value), county GIS APIs (parcel boundaries, lot dimensions, frontage calculations, building footprint), OpenStreetMap (supplemental building data), Census TIGER files (parcel geometry)
+- [x] **DATA-03**: All Stage 1 data cached in ReVested's property database on first lookup; subsequent lookups for same address served from cache with zero repeat API calls
 - [ ] **DATA-04**: Stage 2 — premium data enrichment (paid tier only, triggered on demand): Rentcast API (primary unit and ADU rent estimates), skip trace API (owner contact — never cached), ATTOM or similar (deeper comparable sales), ReVested DADU zoning rules database (internal — no external API cost)
-- [ ] **DATA-05**: Cache TTLs per field-level caching architecture: Stage 1 static 180 days, Stage 1 semi-static 30 days, Stage 2 rent estimates 24–48 hours, Stage 2 skip trace never cache
-- [ ] **DATA-06**: Track `cache_source` per field: county_api | gis_api | openstreetmap | rentcast | attom | internal
-- [ ] **DATA-07**: County data quality tiers: King County WA (Excellent — full GIS + assessor API), Multnomah County OR (Good — open data portal, some API limitations), Pierce County WA (Moderate — assessor data available, GIS less structured), Snohomish County WA (Moderate — available but requires more parsing)
-- [ ] **DATA-08**: Implement as `DataEnrichmentService` with `stage1Enrich(address)` and `stage2Enrich(propertyId, features[])` as distinct methods — free/paid boundary explicit in codebase
-- [ ] **DATA-09**: Graceful degradation: show available data clearly, flag missing fields explicitly rather than failing silently
-- [ ] **DATA-10**: Track cache hit rate as a key infrastructure metric — every lookup enriches internal cache; repeat lookups cost nothing over time
+- [x] **DATA-05**: Cache TTLs per field-level caching architecture: Stage 1 static 180 days, Stage 1 semi-static 30 days, Stage 2 rent estimates 24–48 hours, Stage 2 skip trace never cache
+- [x] **DATA-06**: Track `cache_source` per field: county_api | gis_api | openstreetmap | rentcast | attom | internal
+- [x] **DATA-07**: County data quality tiers: King County WA (Excellent — full GIS + assessor API), Multnomah County OR (Good — open data portal, some API limitations), Pierce County WA (Moderate — assessor data available, GIS less structured), Snohomish County WA (Moderate — available but requires more parsing)
+- [x] **DATA-08**: Implement as `DataEnrichmentService` with `stage1Enrich(address)` and `stage2Enrich(propertyId, features[])` as distinct methods — free/paid boundary explicit in codebase
+- [x] **DATA-09**: Graceful degradation: show available data clearly, flag missing fields explicitly rather than failing silently
+- [x] **DATA-10**: Track cache hit rate as a key infrastructure metric — every lookup enriches internal cache; repeat lookups cost nothing over time
 
 ### Data Tier Architecture
 
 - [x] **TIER-01**: Property data organized into three access tiers controlled by a central gating service — never scatter plan checks in individual components
 - [x] **TIER-02**: Tier 1 (always free — Stage 1 public data): basic property attributes (beds, baths, sqft, lot size, year built, zoning name, owner name, last sale date/price, tax assessed value), parcel boundaries and basic map display, manual calculator inputs, Deal Score from manually entered data only
 - [x] **TIER-03**: Tier 2 (preview free — demonstrates value): rent estimate shown as clear readable number, DADU feasibility pass/fail/conditional badge with one-line reason, Deal Score from auto-populated data shown clearly
-- [ ] **TIER-04**: Tier 2 critical UI pattern: show data clearly and completely — never blur, hide, or obscure. Gate the ability to use it (include in analysis, save, export), not the visibility. "See everything, do more with Pro"
+- [x] **TIER-04**: Tier 2 critical UI pattern: show data clearly and completely — never blur, hide, or obscure. Gate the ability to use it (include in analysis, save, export), not the visibility. "See everything, do more with Pro"
 - [x] **TIER-05**: Tier 3 (Pro only $99/month): full rent comps with addresses/sqft/distance, full DADU feasibility checklist with all rules and sources, Deal Score breakdown with component scores, automated Stage 1 + Stage 2 data pull, ADU rent estimate, BRRRR with auto-populated data, skip trace (10/month), PDF export, shareable deal links, unlimited saves/lists, sensitivity analysis, ability to include Tier 2 preview data in analysis/saves/exports
 - [x] **TIER-06**: Central gating service: single config file or database table defines feature-to-tier assignments; all components call this service to check access; supports tier changes, A/B testing, and new tiers without rearchitecting
 - [x] **TIER-07**: Tier assignments are intentionally preliminary — gating architecture must support rapid iteration on what's free vs. paid without engineering effort; limits configurable per tier without code deployments
@@ -199,13 +199,13 @@
 ### Usage Metering and Action Counting
 
 - [x] **METER-01**: Every action with a cost implication is logged before it executes — not after. Tracks: user_id, timestamp, action_type, cost_estimate_cents, api_provider, property_id (nullable), metadata JSON, plan_at_time_of_action
-- [ ] **METER-02**: Data pull actions metered: address_lookup_stage1, address_lookup_stage2, rent_estimate_requested (primary), rent_estimate_requested_adu, dadu_feasibility_checked (per property per session), comparable_sales_pulled
+- [x] **METER-02**: Data pull actions metered: address_lookup_stage1, address_lookup_stage2, rent_estimate_requested (primary), rent_estimate_requested_adu, dadu_feasibility_checked (per property per session), comparable_sales_pulled
 - [ ] **METER-03**: User content actions metered: analysis_saved, analysis_exported_pdf, analysis_shared_link_created, list_created, list_exported, property_added_to_list
-- [ ] **METER-04**: Skip trace actions metered: skip_trace_requested (highest cost — always meter), skip_trace_result_found (boolean — track hit rate separately)
-- [ ] **METER-05**: Report actions metered: deal_report_generated, deal_report_viewed_by_recipient (track virality)
+- [x] **METER-04**: Skip trace actions metered: skip_trace_requested (highest cost — always meter), skip_trace_result_found (boolean — track hit rate separately)
+- [x] **METER-05**: Report actions metered: deal_report_generated, deal_report_viewed_by_recipient (track virality)
 - [ ] **METER-06**: Usage aggregation computed and stored daily: per-user daily/monthly action counts by type, per-user estimated daily/monthly API cost in cents, top 20% users by action volume, top 20% users by estimated API cost (different populations), flag users where estimated monthly API cost exceeds 30% of subscription revenue ($29.70 for Pro)
 - [ ] **METER-07**: Admin dashboard (founder-facing): users sorted by monthly estimated API cost and action volume, per-user action breakdown, monthly API cost vs. subscription revenue with 30% threshold highlight, email alert when any user's estimated monthly cost exceeds $25
-- [ ] **METER-08**: Soft limits: every metered action checks configurable limit before executing; limits defined in central config per plan tier (same config as gating service); at 80% show usage indicator in account settings; at 100% show clear message with upgrade/overage option — never silently fail; limits can be set to "unlimited"
+- [x] **METER-08**: Soft limits: every metered action checks configurable limit before executing; limits defined in central config per plan tier (same config as gating service); at 80% show usage indicator in account settings; at 100% show clear message with upgrade/overage option — never silently fail; limits can be set to "unlimited"
 - [x] **METER-09**: Current soft limits (preliminary): Free tier — 0 automated lookups/month, 0 skip traces/month, 3 saved analyses total, 1 PDF export/month; Pro tier — 50 automated lookups/month, 10 skip traces/month, unlimited saves/exports; Overage — $1.50 per lookup over 50/month, skip trace overage TBD
 - [x] **METER-10**: Beta strategy (first 90 days): set all limits to "unlimited" for all users, log everything but enforce nothing; after 90 days analyze actual usage to set informed limits before public launch
 - [ ] **METER-11**: Power user protection: Pro users with estimated monthly API cost exceeding $29.70 flagged in admin dashboard; founder reviews monthly to inform tier adjustment; high-cost users studied, not punished
@@ -394,31 +394,31 @@
 | DEAL-05 | Phase 2B | Pending |
 | DEAL-06 | Phase 2B | Pending |
 | DEAL-07 | Phase 2B | Pending |
-| DATA-01 | Phase 2A | Pending |
-| DATA-02 | Phase 2A | Pending |
-| DATA-03 | Phase 2A | Pending |
+| DATA-01 | Phase 2A | Complete |
+| DATA-02 | Phase 2A | Complete |
+| DATA-03 | Phase 2A | Complete |
 | DATA-04 | Phase 5 | Pending |
-| DATA-05 | Phase 2A | Pending |
-| DATA-06 | Phase 2A | Pending |
-| DATA-07 | Phase 2A | Pending |
-| DATA-08 | Phase 2A | Pending |
-| DATA-09 | Phase 2A | Pending |
-| DATA-10 | Phase 2A | Pending |
+| DATA-05 | Phase 2A | Complete |
+| DATA-06 | Phase 2A | Complete |
+| DATA-07 | Phase 2A | Complete |
+| DATA-08 | Phase 2A | Complete |
+| DATA-09 | Phase 2A | Complete |
+| DATA-10 | Phase 2A | Complete |
 | TIER-01 | Phase 2A | Complete |
 | TIER-02 | Phase 2A | Complete |
 | TIER-03 | Phase 2A | Complete |
-| TIER-04 | Phase 2A | Pending |
+| TIER-04 | Phase 2A | Complete |
 | TIER-05 | Phase 2A | Complete |
 | TIER-06 | Phase 2A | Complete |
 | TIER-07 | Phase 2A | Complete |
 | METER-01 | Phase 2A | Complete |
-| METER-02 | Phase 2A | Pending |
+| METER-02 | Phase 2A | Complete |
 | METER-03 | Phase 2C | Pending |
-| METER-04 | Phase 2A | Pending |
-| METER-05 | Phase 2A | Pending |
+| METER-04 | Phase 2A | Complete |
+| METER-05 | Phase 2A | Complete |
 | METER-06 | Phase 3 | Pending |
 | METER-07 | Phase 3 | Pending |
-| METER-08 | Phase 2A | Pending |
+| METER-08 | Phase 2A | Complete |
 | METER-09 | Phase 2A | Complete |
 | METER-10 | Phase 2A | Complete |
 | METER-11 | Phase 3 | Pending |
