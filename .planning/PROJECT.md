@@ -32,7 +32,10 @@ Any address → complete investment analysis in under 60 seconds, without manual
 - [x] Pricing: Free tier (BRRRR calculator only, no saving, acquisition funnel) and Pro tier ($99/mo or $79/mo annual — automated data pull with 50 lookups/month, DADU feasibility, rent estimation, unlimited saves/lists, full calculator suite) — Validated in Phase 1: Foundation (server-enforced via requirePro() returning 402)
 - [x] REST API layer designed to support web, mobile, and browser plugin from day one — Validated in Phase 1: Foundation (versioned /api/v1/ routes)
 - [x] Subscription/billing integration (Stripe or equivalent) — Validated in Phase 1: Foundation (Stripe Checkout, portal, webhook, subscription status)
-- [ ] Product analytics (PostHog) — session recording, event tracking, funnel monitoring as a foundation layer so all subsequent phases inherit tracking automatically
+- [x] Product analytics (PostHog) — session recording, event tracking, funnel monitoring as a foundation layer so all subsequent phases inherit tracking automatically — Validated in Phase 2A: Infrastructure Services (PostHog provider, pageview tracking, server-side events, lifecycle events, session recording configured)
+- [x] Feature gating service — 3-tier gating with database overrides, single config source of truth — Validated in Phase 2A: Infrastructure Services
+- [x] Usage metering pipeline — per-action-type limits, pre-execution logging, beta mode bypass, 80%/100% warnings — Validated in Phase 2A: Infrastructure Services
+- [x] DataEnrichmentService skeleton — Stage 1/Stage 2 boundary defined, cache TTL tiers, stub implementations — Validated in Phase 2A: Infrastructure Services
 - [ ] Property data caching — field-level lazy invalidation with TTL by field type, cascade invalidation, stale-while-revalidate UI
 - [ ] Property organization — lists (free: 3, paid: unlimited) and tags (5 per user) with optimistic UI
 - [ ] Skip trace — owner contact lookup with rate limiting and usage logging
@@ -214,4 +217,4 @@ This document evolves at phase transitions and milestone boundaries.
 4. Update Context with current state
 
 ---
-*Last updated: 2026-03-26 — Added analytics, caching, lists/tags, skip trace to MVP scope; expanded GIS architecture requirements; moved skip trace from out-of-scope to active*
+*Last updated: 2026-03-27 — Phase 2A complete: gating service, usage metering, PostHog analytics, DataEnrichmentService skeleton all validated*
