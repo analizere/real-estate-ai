@@ -4,6 +4,7 @@ import { Suspense, useEffect, useState } from "react";
 import { useSearchParams } from "next/navigation";
 import { useAuth } from "@/hooks/use-auth";
 import { SubscriptionStatusCard } from "@/components/account/subscription-status-card";
+import { UsageMeterCard } from "@/components/ui/usage-meter";
 import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
@@ -32,6 +33,7 @@ function AccountSettingsContent() {
     <div className="space-y-8">
       <h1 className="text-2xl font-semibold leading-[1.2]">Account Settings</h1>
       <SubscriptionStatusCard />
+      <UsageMeterCard />
       <Separator />
       <section className="space-y-4">
         <h2 className="text-base font-medium">Profile</h2>
